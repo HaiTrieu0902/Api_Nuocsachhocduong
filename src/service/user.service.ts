@@ -1,9 +1,7 @@
-import bcrypt from 'bcrypt';
 import { Request } from 'express';
 import Helper from '../helper/Helper';
-import jwt from 'jsonwebtoken';
-import { IUser } from '../types/commom';
 import User from '../models/user.model';
+import { IUser } from '../types/commom';
 
 export const UserService = {
   createUser: async (userData: IUser, req: Request) => {

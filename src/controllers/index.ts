@@ -1,4 +1,2 @@
-/* =================== ROLE ======================= */
 export { default as RoleController } from './role.controller';
-
-/* =================== USER ======================= */
+export { default as UserController } from './user.controller';

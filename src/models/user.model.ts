@@ -11,7 +11,7 @@ interface UserAttributes {
   password?: string | any;
   roleId?: string;
   avatar: string;
-  dob?: string | Date;
+  dob?: Date;
   schoolIds?: any[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -27,7 +27,7 @@ class User extends Model<UserAttributes, UserInput> implements UserAttributes {
   public phoneNumber!: string;
   public password!: string;
   public roleId!: string;
-  public dob!: string | Date;
+  public dob!: Date;
   public avatar!: string;
   public schoolIds!: any[];
   public readonly createdAt!: Date;
@@ -79,7 +79,7 @@ User.init(
     },
     dob: {
       allowNull: true,
-      type: DataTypes.STRING || DataTypes.DATE,
+      type: DataTypes.DATE,
     },
   },
   {

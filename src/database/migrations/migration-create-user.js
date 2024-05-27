@@ -6,7 +6,7 @@ const { DataTypes } = require('sequelize');
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      'User',
+      'Users',
       {
         id: {
           allowNull: false,
@@ -44,7 +44,7 @@ module.exports = {
         },
         dob: {
           allowNull: false,
-          type: Sequelize.STRING,
+          type: Sequelize.DATE,
         },
         avatar: {
           allowNull: true,
@@ -73,6 +73,6 @@ module.exports = {
     // Movie.belongsToMany(Actor, { through: ActorMovies });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('User');
+    await queryInterface.dropTable('Users');
   },
 };

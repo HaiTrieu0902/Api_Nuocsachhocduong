@@ -8,12 +8,14 @@ export interface IUserToken {
 
 export interface IUser {
   id?: string;
-  userName: string;
-  email: string;
-  phoneNumber: string;
-  password: string;
-  isVerify?: boolean;
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  password?: string | any;
   roleId?: string;
+  avatar: string;
+  dob?: Date;
+  schoolIds?: any[];
 }
 
 export type Parameters = {

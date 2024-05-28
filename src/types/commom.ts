@@ -25,3 +25,9 @@ export type Parameters = {
   as: string;
   exclude: string[];
 };
+
+export interface IChangePassword {
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+}

@@ -63,3 +63,8 @@ export enum HttpStatusCode {
   NotExtended = 510,
   NetworkAuthenticationRequired = 511,
 }
+
+export const SYSTEM_NOTIFICATION = {
+  USER_CREATE: 'Tạo tài khoản thành công',
+  SUCCESS: 'Thành công',
+};

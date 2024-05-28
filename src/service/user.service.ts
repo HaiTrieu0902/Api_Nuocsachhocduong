@@ -1,8 +1,10 @@
+import bcrypt from 'bcrypt';
 import { Request } from 'express';
+import { MESSAGES_ERROR, USER_ERROR } from '../constant/error';
 import Helper from '../helper/Helper';
+import Role from '../models/role.model';
 import User from '../models/user.model';
-import { IUser } from '../types/commom';
-
+import { IChangePassword, IUser } from '../types/commom';
 export const UserService = {
   createUser: async (userData: IUser, req: Request) => {
     try {
@@ -27,8 +29,59 @@ export const UserService = {
       const data = await User.findOne({
         where: { id },
         attributes: { exclude: ['password'] },
+        include: [
+          {
+            model: Role,
+            as: 'role',
+            attributes: ['role'],
+          },
+        ],
       });
+      if (!data) {
+        throw USER_ERROR.USER_NOT_EXIST;
+      }
       return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateUser: async (userData: IUser, req: Request) => {
+    try {
+      const user = await User.findByPk(userData?.id);
+      console.log('user', user);
+      if (!user) {
+        throw USER_ERROR.USER_NOT_EXIST;
+      }
+      Object.assign(user as never, userData);
+      await user?.save();
+      const { password, ...rest } = user;
+      return rest;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  changePassword: async (params: IChangePassword) => {
+    try {
+      const user = await User.findOne({
+        where: {
+          email: params?.email,
+        },
+      });
+      if (!user) {
+        throw new Error(MESSAGES_ERROR.EMAIL_NOT_EXITS);
+      }
+      const match = await bcrypt.compare(params?.oldPassword, user.password);
+      if (!match) {
+        throw new Error(USER_ERROR?.PASSWORD_MATCH);
+      }
+      const hashed = await Helper?.PasswordHasing(params?.newPassword);
+      user.password = hashed;
+      user.save();
+      const userDataWithoutPassword = { ...user?.dataValues };
+      delete userDataWithoutPassword.password;
+      return userDataWithoutPassword;
     } catch (error) {
       throw error;
     }

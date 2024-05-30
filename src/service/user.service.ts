@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { Request } from 'express';
-import { MESSAGES_ERROR, USER_ERROR } from '../constant/error';
+import { MESSAGES_ERROR, MESSAGES_ERROR } from '../constant/error';
 import Helper from '../helper/Helper';
 import Role from '../models/role.model';
 import User from '../models/user.model';
@@ -38,7 +38,7 @@ export const UserService = {
         ],
       });
       if (!data) {
-        throw USER_ERROR.USER_NOT_EXIST;
+        throw MESSAGES_ERROR.USER_NOT_EXIST;
       }
       return data;
     } catch (error) {
@@ -51,7 +51,7 @@ export const UserService = {
       const user = await User.findByPk(userData?.id);
       console.log('user', user);
       if (!user) {
-        throw USER_ERROR.USER_NOT_EXIST;
+        throw MESSAGES_ERROR.USER_NOT_EXIST;
       }
       Object.assign(user as never, userData);
       await user?.save();
@@ -74,7 +74,7 @@ export const UserService = {
       }
       const match = await bcrypt.compare(params?.oldPassword, user.password);
       if (!match) {
-        throw new Error(USER_ERROR?.PASSWORD_MATCH);
+        throw new Error(MESSAGES_ERROR?.PASSWORD_MATCH);
       }
       const hashed = await Helper?.PasswordHasing(params?.newPassword);
       user.password = hashed;

@@ -66,5 +66,9 @@ export enum HttpStatusCode {
 
 export const SYSTEM_NOTIFICATION = {
   USER_CREATE: 'Tạo tài khoản thành công',
+  ROLE_CREATE: 'Tạo role thành công',
+  LOGOUT: 'Đăng xuất thành công',
+  RESET_PASS: 'Thay đổi mật khẩu thành công',
   SUCCESS: 'Thành công',
+  NOTIFICATION_SENDOTP: 'Đã gửi mã OTP thành công, vui lòng check email',
 };

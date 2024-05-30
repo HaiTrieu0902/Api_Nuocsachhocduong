@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
+import { HttpStatusCode } from '../constant';
+import { MESSAGES_ERROR } from '../constant/error';
 
 const CommonController = {
   uploadImages: (req: Request, res: Response) => {
     res.send({
-      status: 200,
+      status: HttpStatusCode.Ok,
       data: req.files,
     });
   },
@@ -16,7 +18,7 @@ const CommonController = {
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
       if (err) {
-        return res.status(404).send({ message: 'File not found' });
+        return res.status(HttpStatusCode.NotFound).send({ message: MESSAGES_ERROR.IMAGE_NOT_FOUND });
       }
       return res.sendFile(filePath);
     });

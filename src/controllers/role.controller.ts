@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import Role from '@../../../src/models/role.model';
-
 import Helper from '../helper/Helper';
 import { getListWithPagination } from '../utils';
+import { HttpStatusCode, SYSTEM_NOTIFICATION } from '../constant';
+import { MESSAGES_ERROR } from '../constant/error';
 
 const RoleController = {
   GetList: async (req: Request, res: Response): Promise<Response> => {
@@ -18,9 +19,13 @@ const RoleController = {
         },
         { raw: true },
       );
-      return res.status(201).send(Helper.ResponseData(201, 'Role created successfully', newRole));
+      return res
+        .status(HttpStatusCode.Created)
+        .send(Helper.ResponseData(HttpStatusCode.Created, SYSTEM_NOTIFICATION.ROLE_CREATE, newRole));
     } catch (error) {
-      return res.status(500).send(Helper.ResponseError(500, '', error));
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
     }
   },
 
@@ -30,14 +35,18 @@ const RoleController = {
       const role = await Role.findByPk(id);
       role?.destroy();
       if (!role) {
-        return res.status(404).send({
-          status: 404,
-          message: 'Not found role',
+        return res.status(HttpStatusCode.NotFound).send({
+          status: HttpStatusCode.NotFound,
+          message: MESSAGES_ERROR.ROLE_NOT_EXITS,
         });
       }
-      return res.status(200).send(Helper.ResponseData(200, 'Delete Role Successfully', null));
+      return res
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.SUCCESS, null));
     } catch (error) {
-      return res.status(500).send(Helper.ResponseError(500, '', error));
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
     }
   },
 
@@ -45,7 +54,9 @@ const RoleController = {
     try {
       const { listId } = req.body;
       if (!listId || !Array.isArray(listId)) {
-        return res.status(400).send(Helper.ResponseError(400, 'Invalid listId format', null));
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .send(Helper.ResponseError(HttpStatusCode.BadRequest, MESSAGES_ERROR.INVALID, null));
       }
       const deletedCount = await Role.destroy({
         where: {
@@ -53,9 +64,13 @@ const RoleController = {
         },
       });
 
-      return res.status(200).send(Helper.ResponseData(200, 'Delete List Role Successfully', deletedCount));
+      return res
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.SUCCESS, deletedCount));
     } catch (error) {
-      return res.status(500).send(Helper.ResponseError(500, '', error));
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
     }
   },
 
@@ -64,17 +79,25 @@ const RoleController = {
       const { id, role: newRoleValue } = req.body;
       const roleRes = await Role.findByPk(id);
       if (!roleRes) {
-        return res.status(404).send(Helper.ResponseError(404, 'Role not found', null));
+        return res
+          .status(HttpStatusCode.NotFound)
+          .send(Helper.ResponseError(HttpStatusCode.NotFound, MESSAGES_ERROR.ROLE_NOT_EXITS, null));
       }
       const existingRole = await Role.findOne({ where: { role: newRoleValue } });
       if (existingRole && existingRole.id !== id) {
-        return res.status(400).send(Helper.ResponseError(400, 'Role already exists', null));
+        return res
+          .status(HttpStatusCode.BadRequest)
+          .send(Helper.ResponseError(HttpStatusCode.BadRequest, MESSAGES_ERROR.ROLE_HAS_EXITS, null));
       }
       roleRes.role = newRoleValue;
       await roleRes.save();
-      return res.status(200).send(Helper.ResponseData(200, 'Update Role Successfully', roleRes));
+      return res
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.SUCCESS, roleRes));
     } catch (error) {
-      return res.status(500).send(Helper.ResponseError(500, '', error));
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
     }
   },
 };

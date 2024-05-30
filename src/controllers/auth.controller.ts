@@ -1,100 +1,103 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import { HttpStatusCode, SYSTEM_NOTIFICATION } from '../constant';
+import { MESSAGES_ERROR } from '../constant/error';
 import Helper from '../helper/Helper';
-import UserService from '../service/user.service';
+import { AuthService } from '../service';
 
 const dotenv = require('dotenv');
 dotenv.config();
 
 const AuthController = {
-  Register: async (req: Request, res: Response): Promise<Response> => {
+  Login: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const newUser = await UserService.createUser(req.body, req);
-      return res.status(201).send(Helper.ResponseData(201, 'Tạo tài khoảnh thành công', newUser));
-    } catch (error) {
-      return res.status(500).send(Helper.ResponseError(500, '', error));
+      const loginResult = await AuthService.loginUser(req.body);
+      res.cookie('access_token', loginResult.token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+        path: '/',
+        secure: false,
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.SUCCESS, loginResult));
+    } catch (error: any) {
+      if (error?.statusCode === HttpStatusCode.NotFound) {
+        return res
+          .status(HttpStatusCode.NotFound)
+          .send(Helper.ResponseError(HttpStatusCode.NotFound, error?.message, error));
+      } else {
+        return res
+          .status(HttpStatusCode.InternalServerError)
+          .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
+      }
     }
   },
 
-  //   Login: async (req: Request, res: Response): Promise<Response> => {
-  //     try {
-  //       const { email, password } = req.body;
-  //       const loginResult = await AuthService.loginUser(email, password);
-  //       res.cookie('access_token', loginResult.token, {
-  //         httpOnly: true,
-  //         maxAge: 24 * 60 * 60 * 1000,
-  //         path: '/',
-  //         secure: false,
-  //       });
-  //       return res.status(200).send(Helper.ResponseData(200, 'Login Successfully', loginResult));
-  //     } catch (error: any) {
-  //       console.log('error', error);
-  //       if (error?.statusCode === 404) {
-  //         return res.status(404).send(Helper.ResponseError(404, error?.message, error));
-  //       } else {
-  //         return res.status(500).send(Helper.ResponseError(500, '', error));
-  //       }
-  //     }
-  //   },
-
-  //   Logout: async (req: Request, res: Response) => {
-  //     try {
-  //       res.clearCookie('access_token');
-  //       res.status(200).json({ message: 'Logged out' });
-  //     } catch (error) {
-  //       return res.status(500).send(Helper.ResponseError(500, '', error));
-  //     }
-  //   },
-
+  Logout: async (req: Request, res: Response) => {
+    try {
+      res.clearCookie('access_token');
+      res.status(HttpStatusCode.Ok).json({ message: SYSTEM_NOTIFICATION.LOGOUT });
+    } catch (error) {
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
+    }
+  },
   /* Forget password , check mail */
-  //   ForgotPasswod: async (req: Request, res: Response): Promise<Response> => {
-  //     try {
-  //       const { email, password, confirmPassword } = req.body;
-  //       const params = {
-  //         email,
-  //         password,
-  //         confirmPassword,
-  //       };
-  //       const result = await AuthService.forgotPassWordUser(params);
-  //       return res.status(200).send(Helper.ResponseData(200, 'Reset password successfully', result));
-  //     } catch (error) {
-  //       return res.status(500).send(Helper.ResponseError(500, '', error));
-  //     }
-  //   },
+  ForgotPasswod: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { email, password, confirmPassword } = req.body;
+      const params = {
+        email,
+        password,
+        confirmPassword,
+      };
+      const result = await AuthService.forgotPassWordUser(params);
+      return res
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.RESET_PASS, result));
+    } catch (error) {
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
+    }
+  },
 
-  /* Change Password */
-  //   ChangePassword: async (req: Request, res: Response): Promise<Response> => {
-  //     try {
-  //       const { email, currentPassword, newPassword, confirmPassword } = req.body;
-  //       const params = {
-  //         email,
-  //         currentPassword,
-  //         newPassword,
-  //         confirmPassword,
-  //       };
-  //       const result = await AuthService.changePasswordUser(params);
-  //       return res.status(200).send(Helper.ResponseData(200, 'Reset password successfully', result));
-  //     } catch (error) {
-  //       return res.status(500).send(Helper.ResponseError(500, '', error));
-  //     }
-  //   },
+  /** handle sendOTP code  */
+  SendOTPToEmailUser: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { email } = req.body;
+      const result = await AuthService.sendOTPToEmail(email);
+      return res
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.SUCCESS, result));
+    } catch (error) {
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
+    }
+  },
 
-  /* Verify email */
-  //   Verify: async (req: Request, res: Response): Promise<Response> => {
-  //     try {
-  //       const { token } = req.params;
-  //       const user = await AuthService.verifyEmailUser(token);
-  //       if (user.isVerify !== true) {
-  //         user.isVerify = true;
-  //         await user.save();
-  //         return res.status(200).send(Helper.ResponseData(200, 'Email Verified Successfully', ''));
-  //       } else {
-  //         return res.status(400).send(Helper.ResponseError(400, 'Email Already Verified', ''));
-  //       }
-  //     } catch (error) {
-  //       return res.status(500).send(Helper.ResponseError(500, '', error));
-  //     }
-  //   },
+  /** handle verify OTP  */
+  VerifyOTPUser: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { email, otp } = req.body;
+      const result = await AuthService.verifyOTP(email, otp);
+      if (result) {
+        return res
+          .status(HttpStatusCode.Ok)
+          .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.SUCCESS, result));
+      } else {
+        return res
+          .status(HttpStatusCode.InternalServerError)
+          .send(Helper.ResponseError(HttpStatusCode.InternalServerError, MESSAGES_ERROR.OTP_ERROR, result));
+      }
+    } catch (error) {
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
+    }
+  },
 };
 
 export default AuthController;

@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { Request } from 'express';
-import { MESSAGES_ERROR, MESSAGES_ERROR } from '../constant/error';
+import { MESSAGES_ERROR } from '../constant/error';
 import Helper from '../helper/Helper';
 import Role from '../models/role.model';
 import User from '../models/user.model';

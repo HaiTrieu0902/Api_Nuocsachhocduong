@@ -65,7 +65,7 @@ export const AuthService = {
         delete userDataWithoutPassword.password;
         return userDataWithoutPassword;
       } else {
-        throw new Error('New Password and Confirm Password not match');
+        throw new Error(MESSAGES_ERROR?.PASS_NOT_MATCH);
       }
     } catch (error) {
       throw error;

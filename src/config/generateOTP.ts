@@ -15,7 +15,7 @@ const OtpConfig = {
       label: email,
       algorithm: process.env.OTP_ALGORITHM as string,
       digits: 6,
-      period: 60,
+      period: 120,
       secret: process.env.OTP_SECRET,
     });
     const token = totp.generate();
@@ -30,7 +30,7 @@ const OtpConfig = {
         label: email,
         algorithm: process.env.OTP_ALGORITHM as string,
         digits: 6,
-        period: 60,
+        period: 120,
         secret: process.env.OTP_SECRET,
       });
       const isOTPValid = totp.validate({ token: otp, window: 1 });
@@ -40,5 +40,7 @@ const OtpConfig = {
     }
   },
 };
-
+// Khi tạo sẽ gửi OTp vào user email đó mã OTP
+// Tạo thêm một trường OtpSendPass
+// check xem đúng không , nếu thay đổi mật khẩu thành công set OtpSendPass là null
 export default OtpConfig;

@@ -1,8 +1,6 @@
 export const MESSAGES_ERROR = {
   USER_NOT_EXIST: 'Người dùng không tồn tại trong hệ thống',
-
   PASS_NOT_MATCH: 'Mật khẩu không trùng nhau',
-
   LOGIN_ERROR: 'Email hoặc số điện thoại không đúng',
   LOGIN_PASS: 'Mật khẩu không đúng',
   PASSWORD_MATCH: 'Mật khẩu cũ không trùng khớp',

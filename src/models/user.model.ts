@@ -10,7 +10,9 @@ interface UserAttributes {
   phoneNumber?: string;
   password?: string | any;
   roleId?: string;
-  avatar: string;
+  avatar?: string;
+  isDelete?: boolean;
+  codeOTP?: string;
   dob?: Date;
   schoolIds?: any[];
   createdAt?: Date;
@@ -29,6 +31,8 @@ class User extends Model<UserAttributes, UserInput> implements UserAttributes {
   public roleId!: string;
   public dob!: Date;
   public avatar!: string;
+  public isDelete!: boolean;
+  public codeOTP!: string;
   public schoolIds!: any[];
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -77,6 +81,17 @@ User.init(
       allowNull: true,
       type: DataTypes.STRING,
     },
+
+    isDelete: {
+      allowNull: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    codeOTP: {
+      allowNull: true,
+      type: DataTypes.STRING,
+    },
+
     dob: {
       allowNull: true,
       type: DataTypes.DATE,

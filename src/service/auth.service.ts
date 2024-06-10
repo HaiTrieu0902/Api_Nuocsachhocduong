@@ -55,12 +55,13 @@ export const AuthService = {
         },
       });
       if (!user) {
-        throw new Error('Email not found');
+        throw new Error(MESSAGES_ERROR?.EMAIL_NOT_EXITS);
       }
       if (params?.password === params?.confirmPassword) {
         const hashed = await Helper?.PasswordHasing(params?.password);
         user.password = hashed;
-        user.save();
+        user.codeOTP = '';
+        await user.save();
         const userDataWithoutPassword = { ...user?.dataValues };
         delete userDataWithoutPassword.password;
         return userDataWithoutPassword;
@@ -77,7 +78,12 @@ export const AuthService = {
       const user = await User.findOne({
         where: { email },
       });
+      if (!user) {
+        throw new Error(MESSAGES_ERROR?.USER_NOT_EXIST);
+      }
       const otp = await OtpConfig?.generateOTPAuth(email);
+      user.codeOTP = otp;
+      await user.save();
       const data = await mailerCheckOTP(email, user?.fullName || '', otp);
       return data;
     } catch (error) {
@@ -87,12 +93,26 @@ export const AuthService = {
 
   verifyOTP: async (email: string, otp: string) => {
     try {
-      const isOTPValid = await OtpConfig?.verifyOTP(email, otp);
-      if (isOTPValid) {
+      const user = await User.findOne({
+        where: { email },
+      });
+      if (!user) {
+        throw new Error(MESSAGES_ERROR?.USER_NOT_EXIST);
+      }
+      console.log('📢 [auth.service.ts:103]', user?.codeOTP);
+      console.log('📢 [auth.service.ts:104]', otp);
+
+      if (user?.codeOTP === otp) {
         return true;
       } else {
         return false;
       }
+      // const isOTPValid = await OtpConfig?.verifyOTP(email, otp);
+      // if (isOTPValid) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
     } catch (error) {
       throw error;
     }

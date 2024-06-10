@@ -99,9 +99,6 @@ export const AuthService = {
       if (!user) {
         throw new Error(MESSAGES_ERROR?.USER_NOT_EXIST);
       }
-      console.log('📢 [auth.service.ts:103]', user?.codeOTP);
-      console.log('📢 [auth.service.ts:104]', otp);
-
       if (user?.codeOTP === otp) {
         return true;
       } else {

@@ -3,6 +3,8 @@ import Helper from '../helper/Helper';
 
 import { HttpStatusCode, SYSTEM_NOTIFICATION } from '../constant';
 import { UserService } from '../service';
+import User from '../models/user.model';
+import { MESSAGES_ERROR } from '../constant/error';
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -39,6 +41,29 @@ const UserController = {
       return res
         .status(HttpStatusCode.Ok)
         .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION?.SUCCESS, updateUser));
+    } catch (error) {
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
+    }
+  },
+
+  DeleteUser: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { id } = req.params;
+      const user = await User.findByPk(id);
+      // user?.destroy();
+      if (!user) {
+        return res.status(HttpStatusCode.NotFound).send({
+          status: HttpStatusCode.NotFound,
+          message: MESSAGES_ERROR.USER_NOT_EXIST,
+        });
+      }
+      user.isDelete = true;
+      await user?.save();
+      return res
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.SUCCESS, null));
     } catch (error) {
       return res
         .status(HttpStatusCode.InternalServerError)

@@ -49,7 +49,6 @@ export const UserService = {
   updateUser: async (userData: IUser, req: Request) => {
     try {
       const user = await User.findByPk(userData?.id);
-      console.log('user', user);
       if (!user) {
         throw MESSAGES_ERROR.USER_NOT_EXIST;
       }

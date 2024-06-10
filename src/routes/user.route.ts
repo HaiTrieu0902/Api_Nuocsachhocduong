@@ -1,11 +1,19 @@
 import { UserController } from '../controllers';
+import AuthMiddleware from '../middlewares/auth';
+import validations from '../middlewares/validation/validation';
 
 const express = require('express');
 const routeUser = express.Router();
 
-routeUser.get('/get-profile/:id', UserController.GetDetailUser);
-routeUser.post('/create-user', UserController.CreateAccount);
-routeUser.put('/update-user', UserController.UpdateUser);
-routeUser.put('/changepassword-user', UserController.ChangePassword);
+routeUser.get('/get-profile/:id', AuthMiddleware.Authentication, UserController.GetDetailUser);
+routeUser.post(
+  '/create-user',
+  validations?.RegisterValidation,
+  AuthMiddleware.Authentication,
+  UserController.CreateAccount,
+);
+routeUser.put('/update-user', AuthMiddleware.Authentication, UserController.UpdateUser);
+routeUser.put('/change-password', AuthMiddleware.Authentication, UserController.ChangePassword);
+routeUser.delete('/delete-user/:id', AuthMiddleware.Authentication, UserController.DeleteUser);
 
 export default routeUser;

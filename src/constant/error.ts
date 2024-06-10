@@ -1,4 +1,8 @@
 export const MESSAGES_ERROR = {
+  // middleware
+  UNAUTHORIZED: 'Chưa xác thực',
+  TOKEN_VALID: 'Token không hợp lệ',
+  BAN: 'Bạn không được phép truy cập',
   USER_NOT_EXIST: 'Người dùng không tồn tại trong hệ thống',
   PASS_NOT_MATCH: 'Mật khẩu không trùng nhau',
   LOGIN_ERROR: 'Email hoặc số điện thoại không đúng',
@@ -10,4 +14,6 @@ export const MESSAGES_ERROR = {
   INVALID: 'Dữ liêu không đũng định dạng',
   ROLE_NOT_EXITS: 'Không tìm thấy role',
   ROLE_HAS_EXITS: 'Role đã tồn tại',
+
+  EMAIL_PHONE_EXITS: 'Email hoặc số điện thoại đã tồn tại',
 };

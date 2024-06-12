@@ -55,7 +55,7 @@ export const UserService = {
       Object.assign(user as never, userData);
       await user?.save();
       const { password, ...rest } = user;
-      return rest;
+      return rest?.dataValues;
     } catch (error) {
       throw error;
     }

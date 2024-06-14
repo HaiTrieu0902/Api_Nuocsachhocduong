@@ -16,4 +16,6 @@ export const MESSAGES_ERROR = {
   ROLE_HAS_EXITS: 'Role đã tồn tại',
 
   EMAIL_PHONE_EXITS: 'Email hoặc số điện thoại đã tồn tại',
+
+  NOT_EXITS: 'Dữ liệu không tồn tại',
 };

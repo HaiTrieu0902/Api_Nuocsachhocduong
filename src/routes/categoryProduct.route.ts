@@ -11,25 +11,25 @@ routeCategoryProduct.get(
 routeCategoryProduct.post(
   '/create-category-product',
   AuthMiddleware.Authentication,
-  AuthMiddleware.SuperAdmin,
+  AuthMiddleware.RoleAdmin,
   CategoryProductController.CreateCategoryProduct,
 );
 routeCategoryProduct.put(
   '/update-category-product',
   AuthMiddleware.Authentication,
-  AuthMiddleware.SuperAdmin,
+  AuthMiddleware.RoleAdmin,
   CategoryProductController.UpdateCategoryProduct,
 );
 routeCategoryProduct.delete(
   '/delete-category-product/:id',
   AuthMiddleware.Authentication,
-  AuthMiddleware.SuperAdmin,
+  AuthMiddleware.RoleAdmin,
   CategoryProductController.DeleteCategoryProduct,
 );
 routeCategoryProduct.delete(
   '/delete-category-products',
   AuthMiddleware.Authentication,
-  AuthMiddleware.SuperAdmin,
+  AuthMiddleware.RoleAdmin,
   CategoryProductController.DeleteMultipleCategoryProduct,
 );
 

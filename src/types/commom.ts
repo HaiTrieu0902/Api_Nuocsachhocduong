@@ -24,6 +24,8 @@ export type Parameters = {
   attributes: string[];
   as: string;
   exclude: string[];
+  conditions?: { [key: string]: any };
+  searchFields?: string[];
 };
 
 export interface IChangePassword {

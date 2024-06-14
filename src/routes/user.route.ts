@@ -5,11 +5,14 @@ import validations from '../middlewares/validation/validation';
 const express = require('express');
 const routeUser = express.Router();
 
+routeUser.get('/get-list-user', AuthMiddleware.Authentication, UserController.GetListUser);
+
 routeUser.get('/get-profile/:id', AuthMiddleware.Authentication, UserController.GetDetailUser);
 routeUser.post(
   '/create-user',
   validations?.RegisterValidation,
   AuthMiddleware.Authentication,
+  AuthMiddleware.RoleAdmin,
   UserController.CreateAccount,
 );
 routeUser.put('/update-user', AuthMiddleware.Authentication, UserController.UpdateUser);

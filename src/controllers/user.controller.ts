@@ -5,10 +5,25 @@ import { HttpStatusCode, SYSTEM_NOTIFICATION } from '../constant';
 import { UserService } from '../service';
 import User from '../models/user.model';
 import { MESSAGES_ERROR } from '../constant/error';
+import Role from '../models/role.model';
+import { getListWithPaginationAssociations } from '../utils';
 const dotenv = require('dotenv');
 dotenv.config();
 
 const UserController = {
+  GetListUser: async (req: Request, res: Response): Promise<Response> => {
+    const Parameters = {
+      model: User,
+      subModel: Role,
+      attributes: ['role'],
+      as: 'role',
+      exclude: ['roleId'],
+      conditions: { roleId: req.query.roleId },
+      searchFields: ['email', 'fullName'],
+    };
+    return getListWithPaginationAssociations(req, res, Parameters);
+  },
+
   CreateAccount: async (req: Request, res: Response): Promise<Response> => {
     try {
       const newUser = await UserService.createUser(req.body, req);

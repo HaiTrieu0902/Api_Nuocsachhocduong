@@ -36,6 +36,7 @@ export const AuthService = {
         userName: user.fullName,
         email: user.email,
         phoneNumber: user.phoneNumber,
+        role: user.role?.role,
       });
 
       const userDataWithoutPassword = { ...user?.dataValues };

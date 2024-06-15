@@ -6,14 +6,21 @@ import routeAuth from './auth.route';
 import routeStatus from './status.route';
 import routeCategoryProduct from './categoryProduct.route';
 import routeCategoryMaintenance from './categoryMaintenance.route';
+import routeNews from './news.role';
 
 function route(app: express.Express) {
+  /** AUTH . COMMON **/
+  app.use('/api/common', routeCommon);
+  app.use('/api/auth', routeAuth);
   app.use('/api/role', routeRole);
+
+  /** Category **/
   app.use('/api/status', routeStatus);
   app.use('/api/category', routeCategoryProduct);
   app.use('/api/category', routeCategoryMaintenance);
+
+  /** Entity **/
   app.use('/api/user', routeUser);
-  app.use('/api/common', routeCommon);
-  app.use('/api/auth', routeAuth);
+  app.use('/api/news', routeNews);
 }
 export default route;

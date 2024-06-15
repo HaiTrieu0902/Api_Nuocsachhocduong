@@ -9,6 +9,7 @@ interface NewsAttributes {
   title?: string;
   type?: boolean;
   content?: string;
+  thumbnail?: string;
   accountId?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -19,16 +20,11 @@ export interface NewsOutput extends Required<NewsAttributes> {}
 
 class News extends Model<NewsAttributes, NewsInput> implements NewsAttributes {
   public id!: string;
-  public fullName!: string;
-  public email!: string;
-  public phoneNumber!: string;
-  public password!: string;
-  public roleId!: string;
-  public dob!: Date;
-  public avatar!: string;
-  public isDelete!: boolean;
-  public codeOTP!: string;
-  public schoolIds!: any[];
+  public title!: string;
+  public type!: boolean;
+  public content!: string;
+  public thumbnail?: string;
+  public accountId!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
@@ -57,6 +53,11 @@ News.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    thumbnail: {
+      allowNull: false,
+      type: DataTypes.STRING,
+      defaultValue: false,
+    },
     content: {
       allowNull: true,
       type: DataTypes.STRING,
@@ -72,6 +73,7 @@ News.init(
   },
 );
 
+// Define associations
 User.hasMany(News, { foreignKey: 'accountId', as: 'news' });
 News.belongsTo(User, { foreignKey: 'accountId', as: 'user' });
-export default User;
+export default News;

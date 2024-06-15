@@ -9,10 +9,11 @@ dotenv.config();
 /** handle get list with Panigation */
 export const getListWithPagination = async (Model: any, req: Request, res: Response): Promise<Response> => {
   try {
-    const { page, pageSize } = req.query;
+    const { page, pageSize, sortBy, sortOrder, search, ...query } = req.query;
     const pages = page ? Number(page) : 1;
     const pageSizes = pageSize ? Number(pageSize) : 10;
     const offset = (pages - 1) * pageSizes;
+
     const result = await Model.findAndCountAll(
       page
         ? {
@@ -24,6 +25,7 @@ export const getListWithPagination = async (Model: any, req: Request, res: Respo
     return res.status(HttpStatusCode.Ok).send({
       data: result?.rows,
       total: result?.count,
+      pageSize: pageSize,
     });
   } catch (error) {
     return res
@@ -85,6 +87,7 @@ export const getListWithPaginationAssociations = async (
     return res.status(HttpStatusCode.Ok).send({
       data: transformedResult || result.rows,
       total: result.count,
+      pageSize: pageSize,
     });
   } catch (error) {
     return res

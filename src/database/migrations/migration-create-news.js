@@ -23,6 +23,10 @@ module.exports = {
           type: Sequelize.BOOLEAN,
           defaultValue: false,
         },
+        thumbnail: {
+          allowNull: false,
+          type: Sequelize.STRING,
+        },
         content: {
           allowNull: true,
           type: Sequelize.STRING,

@@ -70,5 +70,6 @@ export const SYSTEM_NOTIFICATION = {
   LOGOUT: 'Đăng xuất thành công',
   RESET_PASS: 'Thay đổi mật khẩu thành công',
   SUCCESS: 'Thành công',
+  ACCOUNT_DEACTIVE: 'Tài khoản bạn đã bị vô hiệu hóa, vui lòng liên hệ Admin',
   NOTIFICATION_SENDOTP: 'Đã gửi mã OTP thành công, vui lòng check email',
 };

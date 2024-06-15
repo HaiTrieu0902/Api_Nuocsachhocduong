@@ -1,14 +1,12 @@
 import bcrypt from 'bcrypt';
-import { Request } from 'express';
-import Helper from '../helper/Helper';
-import jwt from 'jsonwebtoken';
-import { ILogin, IUser } from '../types/commom';
-import User from '../models/user.model';
-import Role from '../models/role.model';
 import { Op } from 'sequelize';
-import { MESSAGES_ERROR } from '../constant/error';
-import { mailerCheckOTP, mailerOptions, tranporter } from '../config/mail.config';
 import OtpConfig from '../config/generateOTP';
+import { mailerCheckOTP } from '../config/mail.config';
+import { MESSAGES_ERROR } from '../constant/error';
+import Helper from '../helper/Helper';
+import Role from '../models/role.model';
+import User from '../models/user.model';
+import { ILogin } from '../types/commom';
 export const AuthService = {
   loginUser: async (params: ILogin) => {
     try {
@@ -30,6 +28,9 @@ export const AuthService = {
       const isPasswordMatch = await bcrypt.compare(params.password, user.password);
       if (!isPasswordMatch) {
         throw new Error(MESSAGES_ERROR?.LOGIN_PASS);
+      }
+      if (user?.isDelete) {
+        throw new Error(MESSAGES_ERROR?.ACCOUNT_DEACTIVE);
       }
       const token = Helper.GenerateToken({
         id: user.id,

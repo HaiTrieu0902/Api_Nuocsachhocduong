@@ -5,6 +5,7 @@ import Helper from '../helper/Helper';
 import Role from '../models/role.model';
 import User from '../models/user.model';
 import { IChangePassword, IUser } from '../types/commom';
+import { HttpStatusCode } from '../constant';
 export const UserService = {
   createUser: async (userData: IUser, req: Request) => {
     try {
@@ -56,6 +57,21 @@ export const UserService = {
       await user?.save();
       const { password, ...rest } = user;
       return rest?.dataValues;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteUser: async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const user = await User.findByPk(id);
+      if (!user) {
+        throw MESSAGES_ERROR.USER_NOT_EXIST;
+      }
+      user.isDelete = true;
+      await user?.save();
+      return user;
     } catch (error) {
       throw error;
     }

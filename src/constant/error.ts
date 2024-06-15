@@ -18,4 +18,6 @@ export const MESSAGES_ERROR = {
   EMAIL_PHONE_EXITS: 'Email hoặc số điện thoại đã tồn tại',
 
   NOT_EXITS: 'Dữ liệu không tồn tại',
+
+  ACCOUNT_DEACTIVE: 'Tài khoản đã bị vô hiêu hóa, Vui lòng Admin',
 };

@@ -39,3 +39,11 @@ export interface ILogin {
   password: string;
   deviceLogin: string;
 }
+
+export interface INews {
+  id?: string;
+  title?: string;
+  type?: boolean;
+  content?: string;
+  roleId?: string;
+}

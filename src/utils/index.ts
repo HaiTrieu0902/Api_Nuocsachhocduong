@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Helper from '../helper/Helper';
-import { Parameters } from '../types/commom';
+import { Parameters } from '../types/interface';
 import { Op } from 'sequelize';
 import { HttpStatusCode } from '../constant';
 const dotenv = require('dotenv');

@@ -7,6 +7,7 @@ import routeStatus from './status.route';
 import routeCategoryProduct from './categoryProduct.route';
 import routeCategoryMaintenance from './categoryMaintenance.route';
 import routeNews from './news.role';
+import routeProduct from './product.route';
 
 function route(app: express.Express) {
   /** AUTH . COMMON **/
@@ -22,5 +23,6 @@ function route(app: express.Express) {
   /** Entity **/
   app.use('/api/user', routeUser);
   app.use('/api/news', routeNews);
+  app.use('/api/product', routeProduct);
 }
 export default route;

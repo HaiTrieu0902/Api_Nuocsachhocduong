@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { IUserToken } from '../types/commom';
+import { IUserToken } from '../types/interface';
 
 /* handle Response Data */
 const ResponseData = (status: number, message: string, data: any) => {

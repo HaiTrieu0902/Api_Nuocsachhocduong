@@ -47,3 +47,14 @@ export interface INews {
   content?: string;
   roleId?: string;
 }
+
+export interface IProduct {
+  id?: string;
+  code?: string;
+  name?: string;
+  price?: number;
+  discount?: number;
+  content?: string;
+  categoryProductId?: string;
+  images?: any[];
+}

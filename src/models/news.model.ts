@@ -56,11 +56,10 @@ News.init(
     thumbnail: {
       allowNull: false,
       type: DataTypes.STRING,
-      defaultValue: false,
     },
     content: {
       allowNull: true,
-      type: DataTypes.STRING,
+      type: DataTypes.JSON,
     },
     accountId: {
       allowNull: false,

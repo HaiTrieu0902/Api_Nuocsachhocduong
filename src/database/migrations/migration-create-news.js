@@ -29,7 +29,7 @@ module.exports = {
         },
         content: {
           allowNull: true,
-          type: Sequelize.STRING,
+          type: Sequelize.JSON,
         },
         accountId: {
           allowNull: false,

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { HttpStatusCode, SYSTEM_NOTIFICATION } from '../constant';
-import { MESSAGES_ERROR } from '../constant/error';
 import Helper from '../helper/Helper';
 import Role from '../models/role.model';
 import User from '../models/user.model';

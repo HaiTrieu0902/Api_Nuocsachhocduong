@@ -6,7 +6,7 @@ import { MESSAGES_ERROR } from '../constant/error';
 import Helper from '../helper/Helper';
 import Role from '../models/role.model';
 import User from '../models/user.model';
-import { ILogin } from '../types/commom';
+import { ILogin } from '../types/interface';
 export const AuthService = {
   loginUser: async (params: ILogin) => {
     try {

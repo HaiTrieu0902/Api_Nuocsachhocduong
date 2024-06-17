@@ -3,28 +3,30 @@ import { HttpStatusCode, SYSTEM_NOTIFICATION } from '../constant';
 import Helper from '../helper/Helper';
 import News from '../models/news.model';
 import User from '../models/user.model';
-import { NewsService } from '../service';
+import { NewsService, ProductService } from '../service';
 import { getListWithPaginationAssociations } from '../utils';
+import Product from '../models/product.model';
+import CategoryProduct from '../models/categoryProduct.model';
 
-const NewsController = {
-  GetListNews: async (req: Request, res: Response): Promise<Response> => {
+const ProductController = {
+  GetListProduct: async (req: Request, res: Response): Promise<Response> => {
     const Parameters = {
-      model: News,
-      subModel: User,
-      attributes: ['id', 'fullName', 'email'],
-      as: 'user',
-      exclude: ['accountId'],
-      searchFields: ['title', 'content'],
+      model: Product,
+      subModel: CategoryProduct,
+      attributes: ['id', 'code', 'name'],
+      as: 'categoryProduct',
+      exclude: ['categoryProductId'],
+      searchFields: ['code', 'name', 'content'],
     };
     return getListWithPaginationAssociations(req, res, Parameters);
   },
 
-  CreateNews: async (req: Request, res: Response): Promise<Response> => {
+  CreateProduct: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const newNews = await NewsService.createNews(req.body, req);
+      const newProduct = await ProductService.createProduct(req.body, req);
       return res
         .status(HttpStatusCode.Created)
-        .send(Helper.ResponseData(HttpStatusCode.Created, SYSTEM_NOTIFICATION?.SUCCESS, newNews));
+        .send(Helper.ResponseData(HttpStatusCode.Created, SYSTEM_NOTIFICATION?.SUCCESS, newProduct));
     } catch (error) {
       return res
         .status(HttpStatusCode.InternalServerError)
@@ -32,9 +34,9 @@ const NewsController = {
     }
   },
 
-  GetDetailNews: async (req: Request, res: Response): Promise<Response> => {
+  GetDetailProduct: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const data = await NewsService.getDetailNews(req, res as never);
+      const data = await ProductService.getDetailProduct(req, res as never);
       return res
         .status(HttpStatusCode.Ok)
         .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION?.SUCCESS, data));
@@ -45,12 +47,12 @@ const NewsController = {
     }
   },
 
-  UpdateNews: async (req: Request, res: Response): Promise<Response> => {
+  UpdateProduct: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const updateNews = await NewsService.updateNews(req.body, req);
+      const updateProduct = await ProductService.updateProduct(req.body, req);
       return res
         .status(HttpStatusCode.Ok)
-        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION?.SUCCESS, updateNews));
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION?.SUCCESS, updateProduct));
     } catch (error) {
       return res
         .status(HttpStatusCode.InternalServerError)
@@ -58,12 +60,12 @@ const NewsController = {
     }
   },
 
-  DeleteNews: async (req: Request, res: Response): Promise<Response> => {
+  DeleteProduct: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const data = await NewsService.deleteNews(req, res as never);
+      const data = await ProductService.deleteProduct(req, res as never);
       return res
         .status(HttpStatusCode.Ok)
-        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.SUCCESS, data));
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION.SUCCESS, null));
     } catch (error) {
       return res
         .status(HttpStatusCode.InternalServerError)
@@ -72,4 +74,4 @@ const NewsController = {
   },
 };
 
-export default NewsController;
+export default ProductController;

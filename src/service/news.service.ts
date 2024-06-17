@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import Helper from '../helper/Helper';
-import News from '../models/news.model';
-import { INews, IUser } from '../types/commom';
-import User from '../models/user.model';
 import { MESSAGES_ERROR } from '../constant/error';
+import News from '../models/news.model';
+import User from '../models/user.model';
+import { INews } from '../types/interface';
 
 export const NewsService = {
   createNews: async (newsData: INews, req: Request) => {
@@ -52,6 +51,20 @@ export const NewsService = {
       Object.assign(news as never, newsData);
       await news?.save();
       return news?.dataValues;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteNews: async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const news = await News.findByPk(id);
+      if (!news) {
+        throw MESSAGES_ERROR.NOT_EXITS;
+      }
+      const res = await news?.destroy();
+      return res;
     } catch (error) {
       throw error;
     }

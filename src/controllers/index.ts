@@ -6,3 +6,4 @@ export { default as StatusController } from './status.controller';
 export { default as CategoryProductController } from './categoryProduct.controller';
 export { default as CategoryMaintenanceController } from './categoryMaintenance.controller';
 export { default as NewsController } from './news.controller';
+export { default as ProductController } from './product.controller';

@@ -11,6 +11,6 @@ routeCommon.post(
   upload.array('images', 12),
   CommonController.uploadImages,
 );
-routeCommon.get('/images/:fileName', AuthMiddleware.Authentication, CommonController.getImage);
+routeCommon.get('/images/:fileName', CommonController.getImage);
 
 export default routeCommon;

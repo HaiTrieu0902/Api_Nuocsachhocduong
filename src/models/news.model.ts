@@ -9,6 +9,7 @@ interface NewsAttributes {
   title?: string;
   type?: boolean;
   content?: string;
+  summary?: string;
   thumbnail?: string;
   accountId?: string;
   createdAt?: Date;
@@ -24,6 +25,7 @@ class News extends Model<NewsAttributes, NewsInput> implements NewsAttributes {
   public type!: boolean;
   public content!: string;
   public thumbnail?: string;
+  public summary?: string;
   public accountId!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -56,6 +58,11 @@ News.init(
     thumbnail: {
       allowNull: false,
       type: DataTypes.STRING,
+    },
+    summary: {
+      allowNull: true,
+      type: DataTypes.STRING,
+      defaultValue: null,
     },
     content: {
       allowNull: true,

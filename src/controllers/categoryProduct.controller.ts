@@ -2,12 +2,17 @@ import { Request, Response } from 'express';
 import { HttpStatusCode, SYSTEM_NOTIFICATION } from '../constant';
 import { MESSAGES_ERROR } from '../constant/error';
 import Helper from '../helper/Helper';
-import { getListWithPagination } from '../utils';
+import { getListWithPagination, getListWithPaginationAssociations } from '../utils';
 import CategoryProduct from '../models/categoryProduct.model';
 
 const CategoryProductController = {
   GetList: async (req: Request, res: Response): Promise<Response> => {
-    return getListWithPagination(CategoryProduct, req, res);
+    const Parameters = {
+      model: CategoryProduct,
+      searchFields: ['code', 'name', 'description'],
+    };
+
+    return getListWithPagination(Parameters, req, res);
   },
 
   CreateCategoryProduct: async (req: Request, res: Response): Promise<Response> => {

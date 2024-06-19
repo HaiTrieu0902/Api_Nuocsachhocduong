@@ -38,8 +38,8 @@ module.exports = {
             model: 'Users',
             key: 'id',
           },
-          onUpdate: 'CASCADE', // Các tùy chọn về cập nhật dữ liệu
-          onDelete: 'CASCADE', // Các tùy chọn về xóa dữ liệu
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
         },
         createdAt: {
           allowNull: false,
@@ -55,10 +55,10 @@ module.exports = {
       //   type: Sequelize.BOOLEAN,
       //   defaultValue: false,
       // }),
-      // await queryInterface.addColumn('Users', 'codeOTP', {
-      //   allowNull: true,
-      //   type: Sequelize.STRING,
-      // }),
+      await queryInterface.addColumn('News', 'summary', {
+        allowNull: true,
+        type: Sequelize.STRING,
+      }),
     );
     // Movie.belongsToMany(Actor, { through: ActorMovies });
   },

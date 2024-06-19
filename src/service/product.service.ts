@@ -28,8 +28,8 @@ export const ProductService = {
         include: [
           {
             model: CategoryProduct,
-            as: 'category',
-            attributes: ['code', 'name'],
+            as: 'categoryProduct',
+            attributes: ['id', 'code', 'name'],
           },
         ],
       });

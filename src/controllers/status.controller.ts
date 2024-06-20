@@ -7,7 +7,12 @@ import { getListWithPagination } from '../utils';
 
 const StatusController = {
   GetList: async (req: Request, res: Response): Promise<Response> => {
-    return getListWithPagination(Status, req, res);
+    const Parameters = {
+      model: Status,
+      searchFields: ['name'],
+    };
+
+    return getListWithPagination(Parameters, req, res);
   },
 
   CreateStatus: async (req: Request, res: Response): Promise<Response> => {

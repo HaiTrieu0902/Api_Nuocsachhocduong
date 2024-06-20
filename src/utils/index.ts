@@ -63,7 +63,7 @@ export const getListWithPaginationAssociations = async (
   Parameters: Parameters,
 ): Promise<Response> => {
   try {
-    const { page, pageSize, sortBy, sortOrder, search, ...query } = req.query;
+    const { page, pageSize, sortBy, sortOrder, search, isDelete, ...query } = req.query;
     const pages = page ? Number(page) : 1;
     const pageSizes = pageSize ? Number(pageSize) : 10;
     const offset = (pages - 1) * pageSizes;
@@ -84,6 +84,12 @@ export const getListWithPaginationAssociations = async (
         [field]: { [Op.like]: `%${search}%` },
       }));
     }
+
+    // Add isDelete condition
+    if (isDelete !== undefined) {
+      where.isDelete = isDelete === 'true';
+    }
+
     // Build sort functionality
     const order = sortBy ? [[sortBy, sortOrder || 'ASC']] : [['createdAt', 'DESC']];
 

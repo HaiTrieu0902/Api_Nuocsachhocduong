@@ -16,8 +16,7 @@ const AuthMiddleware = {
       if (!result) {
         return res.status(403).json({ message: MESSAGES_ERROR.TOKEN_VALID });
       }
-      console.log('📢 [auth.ts:19]', result);
-      console.log('📢 [auth.ts:20]', result?.role);
+
       res.locals.role = result?.role;
       next();
     } catch (error) {

@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
 import { HttpStatusCode, SYSTEM_NOTIFICATION } from '../constant';
 import Helper from '../helper/Helper';
-import News from '../models/news.model';
-import User from '../models/user.model';
-import { NewsService, ProductService } from '../service';
-import { getListWithPaginationAssociations } from '../utils';
-import Product from '../models/product.model';
 import CategoryProduct from '../models/categoryProduct.model';
+import Product from '../models/product.model';
+import { ProductService } from '../service';
+import { getListWithPaginationAssociations } from '../utils';
 
 const ProductController = {
   GetListProduct: async (req: Request, res: Response): Promise<Response> => {
@@ -16,7 +14,8 @@ const ProductController = {
       attributes: ['id', 'code', 'name'],
       as: 'categoryProduct',
       exclude: ['categoryProductId'],
-      searchFields: ['code', 'name', 'content'],
+      conditions: { categoryProductId: req.query.categoryProductId },
+      searchFields: ['code', 'name'],
     };
     return getListWithPaginationAssociations(req, res, Parameters);
   },

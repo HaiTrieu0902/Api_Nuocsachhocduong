@@ -7,7 +7,12 @@ import { MESSAGES_ERROR } from '../constant/error';
 
 const RoleController = {
   GetList: async (req: Request, res: Response): Promise<Response> => {
-    return getListWithPagination(Role, req, res);
+    const Parameters = {
+      model: Role,
+      searchFields: ['role'],
+    };
+
+    return getListWithPagination(Parameters, req, res);
   },
 
   CreateRole: async (req: Request, res: Response): Promise<Response> => {

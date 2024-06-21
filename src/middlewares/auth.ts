@@ -39,6 +39,7 @@ const AuthMiddleware = {
   RoleAdmin: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const roleId = res.locals.role;
+      console.log('roleId', roleId);
       if (roleId === EROLE.STAFF || roleId === EROLE.PRINCIPAL) {
         return res.status(403).send(Helper.ResponseError(403, MESSAGES_ERROR.BAN, ''));
       }

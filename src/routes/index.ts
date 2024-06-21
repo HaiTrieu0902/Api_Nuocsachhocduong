@@ -8,6 +8,7 @@ import routeCategoryProduct from './categoryProduct.route';
 import routeCategoryMaintenance from './categoryMaintenance.route';
 import routeNews from './news.role';
 import routeProduct from './product.route';
+import routeSchool from './school.role';
 
 function route(app: express.Express) {
   /** AUTH . COMMON **/
@@ -24,5 +25,6 @@ function route(app: express.Express) {
   app.use('/api/user', routeUser);
   app.use('/api/news', routeNews);
   app.use('/api/product', routeProduct);
+  app.use('/api/school', routeSchool);
 }
 export default route;

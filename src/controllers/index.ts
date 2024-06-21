@@ -7,3 +7,4 @@ export { default as CategoryProductController } from './categoryProduct.controll
 export { default as CategoryMaintenanceController } from './categoryMaintenance.controller';
 export { default as NewsController } from './news.controller';
 export { default as ProductController } from './product.controller';
+export { default as SchoolController } from './school.controller';

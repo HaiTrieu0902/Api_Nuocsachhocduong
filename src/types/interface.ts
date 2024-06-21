@@ -45,7 +45,7 @@ export interface INews {
   title?: string;
   type?: boolean;
   content?: string;
-  roleId?: string;
+  account?: string;
 }
 
 export interface IProduct {
@@ -57,4 +57,13 @@ export interface IProduct {
   content?: string;
   categoryProductId?: string;
   images?: any[];
+}
+
+export interface ISchool {
+  id?: string;
+  name?: string;
+  email?: string;
+  address?: string;
+  phoneNumber?: number;
+  accountId?: string;
 }

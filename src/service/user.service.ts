@@ -5,7 +5,6 @@ import Helper from '../helper/Helper';
 import Role from '../models/role.model';
 import User from '../models/user.model';
 import { IChangePassword, IUser } from '../types/interface';
-import { HttpStatusCode } from '../constant';
 export const UserService = {
   createUser: async (userData: IUser, req: Request) => {
     try {

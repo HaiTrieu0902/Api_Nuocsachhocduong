@@ -8,7 +8,12 @@ routeNews.get('/get-list-news', AuthMiddleware.Authentication, NewsController.Ge
 
 routeNews.get('/get-detail-news/:id', AuthMiddleware.Authentication, NewsController.GetDetailNews);
 routeNews.post('/create-news', AuthMiddleware.Authentication, AuthMiddleware.RoleAdmin, NewsController.CreateNews);
-routeNews.put('/update-news', AuthMiddleware.Authentication, NewsController.UpdateNews);
-routeNews.delete('/delete-news/:id', AuthMiddleware.Authentication, NewsController.DeleteNews);
+routeNews.put('/update-news', AuthMiddleware.Authentication, AuthMiddleware.RoleAdmin, NewsController.UpdateNews);
+routeNews.delete(
+  '/delete-news/:id',
+  AuthMiddleware.Authentication,
+  AuthMiddleware.RoleAdmin,
+  NewsController.DeleteNews,
+);
 
 export default routeNews;

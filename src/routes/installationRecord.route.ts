@@ -21,12 +21,20 @@ routeInstallRecord.post(
   AuthMiddleware.RolePrincipal,
   InstallRecordController.CreateInstallRecord,
 );
+
 routeInstallRecord.put(
   '/update-install',
   AuthMiddleware.Authentication,
   AuthMiddleware.RolePrincipal,
   InstallRecordController.UpdateInstallRecord,
 );
+
+routeInstallRecord.put(
+  '/update-status-install',
+  AuthMiddleware.Authentication,
+  InstallRecordController.UpdateStatusInstallRecord,
+);
+
 routeInstallRecord.delete(
   '/delete-install/:id',
   AuthMiddleware.Authentication,

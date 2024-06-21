@@ -28,6 +28,14 @@ export type Parameters = {
   searchFields?: string[];
 };
 
+export type ParametersMutiplie = {
+  model: any;
+  include: any[];
+  searchFields: any[];
+  attributes: any;
+  conditions: any;
+};
+
 export interface IChangePassword {
   email: string;
   oldPassword: string;
@@ -80,4 +88,11 @@ export interface IinstallRecord {
   totalAmount: number;
   isDelete?: boolean;
   warrantyPeriod?: number;
+}
+
+export interface IStatusInstallRecord {
+  id?: string;
+  statusId?: string;
+  staffId?: string;
+  role?: string;
 }

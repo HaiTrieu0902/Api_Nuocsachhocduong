@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Helper from '../helper/Helper';
-import { Parameters } from '../types/interface';
-import { Op } from 'sequelize';
+import { Parameters, ParametersMutiplie } from '../types/interface';
+import { Op, Order, where } from 'sequelize';
 import { HttpStatusCode } from '../constant';
 const dotenv = require('dotenv');
 dotenv.config();
@@ -124,51 +124,54 @@ export const getListWithPaginationAssociations = async (
   }
 };
 
-const getPaginatedListMutiplieModel = async (
-  model: any,
-  include: any[],
-  searchFields: any[],
-  conditions: any,
-  req: Request,
-) => {
-  const { page, pageSize, sortBy, sortOrder, search, isDelete, ...query } = req.query;
-  const pages = page ? Number(page) : 1;
-  const pageSizes = pageSize ? Number(pageSize) : 10;
-  const offset = (pages - 1) * pageSizes;
+export const getPaginatedListMutiplieModel = async (Parameters: ParametersMutiplie, req: Request, res: Response) => {
+  try {
+    const { page, pageSize, sortBy, sortOrder, search, isDelete, ...query } = req.query;
+    const pages = page ? Number(page) : 1;
+    const pageSizes = pageSize ? Number(pageSize) : 10;
+    const offset = (pages - 1) * pageSizes;
 
-  const where = conditions
-    ? Object.keys(conditions).reduce((acc: any, key) => {
-        if (query[key]) {
-          acc[key] = query[key];
-        }
-        return acc;
-      }, {})
-    : {};
+    const where = Parameters?.conditions
+      ? Object.keys(Parameters?.conditions).reduce((acc: any, key) => {
+          if (query[key]) {
+            acc[key] = query[key];
+          }
+          return acc;
+        }, {})
+      : {};
 
-  if (search) {
-    where[Op.or] = searchFields.map((field) => ({
-      [field]: { [Op.like]: `%${search}%` },
-    }));
+    if (search) {
+      where[Op.or] = Parameters?.searchFields.map((field) => ({
+        [field]: { [Op.like]: `%${search}%` },
+      }));
+    }
+
+    if (isDelete !== undefined) {
+      where.isDelete = isDelete === 'true';
+    }
+
+    const order: Order =
+      sortBy && typeof sortBy === 'string'
+        ? [[sortBy, typeof sortOrder === 'string' ? sortOrder : 'ASC']]
+        : [['createdAt', 'DESC']];
+
+    const result = await Parameters?.model.findAndCountAll({
+      include: Parameters?.include,
+      offset,
+      where,
+      limit: pageSizes,
+      order,
+      attributes: Parameters?.attributes,
+    });
+    return res.status(HttpStatusCode.Ok).send({
+      data: result.rows,
+      total: result.count,
+      page: page,
+      pageSize: pageSizes,
+    });
+  } catch (error) {
+    return res
+      .status(HttpStatusCode.InternalServerError)
+      .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
   }
-
-  if (isDelete !== undefined) {
-    where.isDelete = isDelete === 'true';
-  }
-
-  const order = sortBy ? [[sortBy, sortOrder || 'ASC']] : [['createdAt', 'DESC']];
-
-  const result = await model.findAndCountAll({
-    include,
-    offset,
-    where,
-    limit: pageSizes,
-    order,
-  });
-
-  return {
-    data: result.rows,
-    total: result.count,
-    page: page,
-    pageSize: pageSizes,
-  };
 };

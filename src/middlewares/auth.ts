@@ -51,7 +51,7 @@ const AuthMiddleware = {
   RolePrincipal: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const roleId = res.locals.role;
-      if (roleId === EROLE.PRINCIPAL) {
+      if (roleId === EROLE.STAFF) {
         return res.status(403).send(Helper.ResponseError(403, MESSAGES_ERROR.BAN, ''));
       }
       next();

@@ -50,15 +50,15 @@ module.exports = {
           allowNull: true,
           type: Sequelize.STRING,
         },
-        // isDelete: {
-        //   allowNull: true,
-        //   type: Sequelize.BOOLEAN,
-        //   defaultValue: false,
-        // },
-        // codeOTP: {
-        //   allowNull: true,
-        //   type: Sequelize.STRING,
-        // },
+        isDelete: {
+          allowNull: true,
+          type: Sequelize.BOOLEAN,
+          defaultValue: false,
+        },
+        codeOTP: {
+          allowNull: true,
+          type: Sequelize.STRING,
+        },
         schoolIds: {
           allowNull: true,
           type: Sequelize.JSON,
@@ -72,15 +72,10 @@ module.exports = {
           type: Sequelize.DATE,
         },
       },
-      await queryInterface.addColumn('Users', 'isDelete', {
-        allowNull: true,
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-      }),
-      await queryInterface.addColumn('Users', 'codeOTP', {
-        allowNull: true,
-        type: Sequelize.STRING,
-      }),
+      // await queryInterface.addColumn('Users', 'codeOTP', {
+      //   allowNull: true,
+      //   type: Sequelize.STRING,
+      // }),
     );
     // Movie.belongsToMany(Actor, { through: ActorMovies });
   },

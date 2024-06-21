@@ -67,3 +67,17 @@ export interface ISchool {
   phoneNumber?: number;
   accountId?: string;
 }
+
+export interface IinstallRecord {
+  id?: string;
+  productId: string;
+  quantity: number;
+  schoolId: string;
+  staffId?: string;
+  accountId: string;
+  timeInstall?: Date | any;
+  statusId: string;
+  totalAmount: number;
+  isDelete?: boolean;
+  warrantyPeriod?: number;
+}

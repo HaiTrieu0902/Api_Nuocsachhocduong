@@ -8,3 +8,4 @@ export { default as CategoryMaintenanceController } from './categoryMaintenance.
 export { default as NewsController } from './news.controller';
 export { default as ProductController } from './product.controller';
 export { default as SchoolController } from './school.controller';
+export { default as InstallRecordController } from './installationRecord.controller';

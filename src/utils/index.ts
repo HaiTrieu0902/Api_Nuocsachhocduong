@@ -123,3 +123,52 @@ export const getListWithPaginationAssociations = async (
       .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
   }
 };
+
+const getPaginatedListMutiplieModel = async (
+  model: any,
+  include: any[],
+  searchFields: any[],
+  conditions: any,
+  req: Request,
+) => {
+  const { page, pageSize, sortBy, sortOrder, search, isDelete, ...query } = req.query;
+  const pages = page ? Number(page) : 1;
+  const pageSizes = pageSize ? Number(pageSize) : 10;
+  const offset = (pages - 1) * pageSizes;
+
+  const where = conditions
+    ? Object.keys(conditions).reduce((acc: any, key) => {
+        if (query[key]) {
+          acc[key] = query[key];
+        }
+        return acc;
+      }, {})
+    : {};
+
+  if (search) {
+    where[Op.or] = searchFields.map((field) => ({
+      [field]: { [Op.like]: `%${search}%` },
+    }));
+  }
+
+  if (isDelete !== undefined) {
+    where.isDelete = isDelete === 'true';
+  }
+
+  const order = sortBy ? [[sortBy, sortOrder || 'ASC']] : [['createdAt', 'DESC']];
+
+  const result = await model.findAndCountAll({
+    include,
+    offset,
+    where,
+    limit: pageSizes,
+    order,
+  });
+
+  return {
+    data: result.rows,
+    total: result.count,
+    page: page,
+    pageSize: pageSizes,
+  };
+};

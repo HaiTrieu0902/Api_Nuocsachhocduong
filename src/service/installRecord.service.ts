@@ -33,7 +33,7 @@ export const InstallRecordService = {
           {
             model: Product,
             as: 'product',
-            attributes: ['id', 'name', 'code', 'price'],
+            attributes: ['id', 'name', 'code', 'price', 'images', 'discount'],
           },
           {
             model: School,
@@ -137,8 +137,10 @@ export const InstallRecordService = {
       if (!installRecord) {
         throw MESSAGES_ERROR.NOT_EXITS;
       }
-      const res = await installRecord?.destroy();
-      return res;
+      installRecord.isDelete = true;
+      installRecord.statusId = ESTATUS.DELETED;
+      await installRecord?.save();
+      return installRecord;
     } catch (error) {
       throw error;
     }

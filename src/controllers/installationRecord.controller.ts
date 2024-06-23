@@ -14,13 +14,19 @@ const InstallRecordController = {
     const Parameters = {
       model: InstallRecord,
       searchFields: ['totalAmount', 'quantity'],
-      conditions: { accountId: req.query.accountId },
+      conditions: {
+        accountId: req.query.accountId,
+        productId: req.query.productId,
+        staffId: req.query.staffId,
+        schoolId: req.query.schoolId,
+        statusId: req.query.statusId,
+      },
       attributes: { exclude: ['productId', 'schoolId', 'statusId', 'staffId', 'accountId'] },
       include: [
         {
           model: Product,
           as: 'product',
-          attributes: ['id', 'name', 'code', 'price'],
+          attributes: ['id', 'name', 'code', 'price', 'images', 'discount'],
         },
         {
           model: School,

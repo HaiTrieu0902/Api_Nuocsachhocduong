@@ -19,5 +19,5 @@ export const MESSAGES_ERROR = {
 
   NOT_EXITS: 'Dữ liệu không tồn tại',
 
-  ACCOUNT_DEACTIVE: 'Tài khoản đã bị vô hiêu hóa, Vui lòng Admin',
+  ACCOUNT_DEACTIVE: 'Tài khoản đã bị vô hiêu hóa, Vui lòng liên hệ Admin',
 };

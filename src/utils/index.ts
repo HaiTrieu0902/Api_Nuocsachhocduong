@@ -3,6 +3,7 @@ import Helper from '../helper/Helper';
 import { Parameters, ParametersMutiplie } from '../types/interface';
 import { Op, Order, where } from 'sequelize';
 import { HttpStatusCode } from '../constant';
+import School from '../models/school.model';
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -102,12 +103,21 @@ export const getListWithPaginationAssociations = async (
       order,
     });
     let transformedResult;
+
     if (Parameters?.model.name === 'User') {
+      const listSchool = await School.findAndCountAll();
       transformedResult = result.rows.map((item: any) => {
         const { password, ...rest } = item.toJSON();
+        const schools = item.schoolIds
+          .map((schoolId: string) => {
+            const school = listSchool.rows.find((s: any) => s.id === schoolId);
+            return school ? { id: school.id, name: school.name } : null;
+          })
+          .filter((school: any) => school !== null);
         return {
           ...rest,
           role: item.role?.role,
+          schools: schools,
         };
       });
     }

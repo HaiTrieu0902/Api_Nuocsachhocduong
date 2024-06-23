@@ -22,6 +22,19 @@ const UserController = {
     return getListWithPaginationAssociations(req, res, Parameters);
   },
 
+  GetDetailUserBySchool: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const data = await UserService.getDetailUserBySchool(req, res as never);
+      return res
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION?.SUCCESS, data));
+    } catch (error) {
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
+    }
+  },
+
   CreateAccount: async (req: Request, res: Response): Promise<Response> => {
     try {
       const newUser = await UserService.createUser(req.body, req);

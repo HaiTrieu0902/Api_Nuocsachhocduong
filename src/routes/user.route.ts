@@ -7,6 +7,8 @@ const routeUser = express.Router();
 
 routeUser.get('/get-list-user', AuthMiddleware.Authentication, UserController.GetListUser);
 
+routeUser.get('/get-user-school/:schoolId', AuthMiddleware.Authentication, UserController.GetDetailUserBySchool);
+
 routeUser.get('/get-profile/:id', AuthMiddleware.Authentication, UserController.GetDetailUser);
 routeUser.post(
   '/create-user',

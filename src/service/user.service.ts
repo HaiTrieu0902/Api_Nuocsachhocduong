@@ -5,6 +5,7 @@ import Helper from '../helper/Helper';
 import Role from '../models/role.model';
 import User from '../models/user.model';
 import { IChangePassword, IUser } from '../types/interface';
+import School from '../models/school.model';
 export const UserService = {
   createUser: async (userData: IUser, req: Request) => {
     try {
@@ -40,7 +41,52 @@ export const UserService = {
       if (!data) {
         throw MESSAGES_ERROR.USER_NOT_EXIST;
       }
-      return data;
+      const listSchool = await School.findAndCountAll();
+      const userData = data.toJSON();
+      const schools = userData?.schoolIds
+        ?.map((schoolId: string) => {
+          const school = listSchool.rows.find((s: any) => s.id === schoolId);
+          return school ? { id: school.id, name: school.name } : null;
+        })
+        .filter((school: any) => school !== null);
+
+      return { ...userData, schools };
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getDetailUserBySchool: async (req: Request, res: Response) => {
+    try {
+      const { schoolId } = req.params;
+      console.log('schoolId', schoolId);
+      const data = await User.findAndCountAll({
+        where: { roleId: '1aaa4422-d200-4fd8-b259-78875e823d06' },
+        order: [['createdAt', 'DESC']],
+      });
+
+      if (!data) {
+        throw new Error(MESSAGES_ERROR.USER_NOT_EXIST);
+      }
+
+      const listSchool = await School.findAndCountAll();
+      const userData = data.rows.map((user) => user.toJSON());
+      const usersWithSchools = userData.map((user) => {
+        const userSchools = user.schoolIds
+          ?.map((schoolId: string) => {
+            const school = listSchool.rows.find((s: any) => s.id === schoolId);
+            return school ? { id: school.id, name: school.name } : null;
+          })
+          .filter((school: any) => school !== null);
+        return {
+          ...user,
+          schools: userSchools,
+        };
+      });
+      const filteredUsers = schoolId
+        ? usersWithSchools.filter((user) => user?.schoolIds?.includes(schoolId))
+        : usersWithSchools;
+      return { users: filteredUsers, total: filteredUsers.length };
     } catch (error) {
       throw error;
     }

@@ -83,7 +83,7 @@ export interface IinstallRecord {
   schoolId: string;
   staffId?: string;
   accountId: string;
-  timeInstall?: Date | any;
+  timeInstall?: any | Date;
   statusId: string;
   totalAmount: number;
   isDelete?: boolean;

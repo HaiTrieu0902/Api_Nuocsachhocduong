@@ -121,6 +121,7 @@ export const InstallRecordService = {
       Object.assign(rows as never, newsData);
       if (newsData?.staffId === rows?.staffId) {
         rows.statusId = newsData.statusId as string;
+        rows.timeInstall = new Date();
       }
       if (newsData?.role === EROLE.PRINCIPAL) {
         rows.statusId = newsData.statusId || ESTATUS.COMPLETED;

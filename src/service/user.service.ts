@@ -86,7 +86,7 @@ export const UserService = {
       const filteredUsers = schoolId
         ? usersWithSchools.filter((user) => user?.schoolIds?.includes(schoolId))
         : usersWithSchools;
-      return { users: filteredUsers, total: filteredUsers.length };
+      return filteredUsers;
     } catch (error) {
       throw error;
     }

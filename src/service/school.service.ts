@@ -45,7 +45,7 @@ export const SchoolService = {
 
   updateSchool: async (data: ISchool, req: Request) => {
     try {
-      const school = await News.findByPk(data?.id);
+      const school = await School.findByPk(data?.id);
       if (!school) {
         throw MESSAGES_ERROR.NOT_EXITS;
       }

@@ -14,7 +14,7 @@ const SchoolController = {
       attributes: ['id', 'fullName', 'email'],
       as: 'user',
       exclude: ['accountId'],
-      searchFields: ['title', 'content'],
+      searchFields: ['name', 'phoneNumber', 'email'],
     };
     return getListWithPaginationAssociations(req, res, Parameters);
   },

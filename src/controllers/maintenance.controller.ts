@@ -53,7 +53,7 @@ const MaintenanceController = {
         {
           model: User,
           as: 'account',
-          attributes: ['id', 'fullName'],
+          attributes: ['id', 'fullName', 'avatar'],
         },
         {
           model: User,

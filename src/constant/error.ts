@@ -19,5 +19,7 @@ export const MESSAGES_ERROR = {
 
   NOT_EXITS: 'Dữ liệu không tồn tại',
 
+  MAINTENANCE_INPROGRESS: 'Đã có một yều cầu trước đó đang xử lý, vùi lòng xem trong danh sách sự cố',
+
   ACCOUNT_DEACTIVE: 'Tài khoản đã bị vô hiêu hóa, Vui lòng liên hệ Admin',
 };

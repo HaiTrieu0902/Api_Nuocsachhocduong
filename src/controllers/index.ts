@@ -9,3 +9,4 @@ export { default as NewsController } from './news.controller';
 export { default as ProductController } from './product.controller';
 export { default as SchoolController } from './school.controller';
 export { default as InstallRecordController } from './installationRecord.controller';
+export { default as MaintenanceController } from './maintenance.controller';

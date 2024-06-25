@@ -96,3 +96,27 @@ export interface IStatusInstallRecord {
   staffId?: string;
   role?: string;
 }
+
+export interface IMaintenance {
+  id?: string;
+  categoryMaintenanceId: string;
+  accountId: string;
+  staffId?: string;
+  installRecordId: string;
+  schoolId: string;
+  statusId: string;
+  title: string;
+  reason: string;
+  repairFees?: number;
+  timeMaintenance?: Date;
+  images_request: any[];
+  images_response?: any[];
+  isDelete?: boolean;
+}
+
+export interface IStatusMaintenance {
+  id?: string;
+  statusId?: string;
+  staffId?: string;
+  role?: string;
+}

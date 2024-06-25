@@ -128,7 +128,9 @@ export const InstallRecordService = {
       }
       await rows?.save();
       return rows?.dataValues;
-    } catch (error) {}
+    } catch (error: any) {
+      throw new Error(`${error.message}`);
+    }
   },
 
   deleteInstallRecord: async (req: Request, res: Response) => {

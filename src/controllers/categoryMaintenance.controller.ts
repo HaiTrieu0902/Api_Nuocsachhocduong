@@ -7,7 +7,11 @@ import CategoryMaintenance from '../models/categoryMaintenance.model';
 
 const CategoryMaintenanceController = {
   GetList: async (req: Request, res: Response): Promise<Response> => {
-    return getListWithPagination(CategoryMaintenance, req, res);
+    const Parameters = {
+      model: CategoryMaintenance,
+      searchFields: ['code', 'name', 'description'],
+    };
+    return getListWithPagination(Parameters, req, res);
   },
 
   CreateCategoryMaintenance: async (req: Request, res: Response): Promise<Response> => {

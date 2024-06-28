@@ -8,6 +8,7 @@ import Status from '../models/status.model';
 import User from '../models/user.model';
 import { IMaintenance, IStatusMaintenance } from '../types/interface';
 import { EROLE, ESTATUS } from '../constant/enum';
+import Product from '../models/product.model';
 
 const includeAttributes = [
   {
@@ -18,6 +19,13 @@ const includeAttributes = [
   {
     model: InstallRecord,
     as: 'installRecord',
+    include: [
+      {
+        model: Product,
+        as: 'product',
+        attributes: ['id', 'name', 'code', 'price', 'images', 'discount'],
+      },
+    ],
   },
   {
     model: School,
@@ -27,12 +35,12 @@ const includeAttributes = [
   {
     model: User,
     as: 'account',
-    attributes: ['id', 'fullName'],
+    attributes: ['id', 'fullName', 'avatar'],
   },
   {
     model: User,
     as: 'staff',
-    attributes: ['id', 'fullName'],
+    attributes: ['id', 'fullName', 'avatar'],
   },
   {
     model: Status,

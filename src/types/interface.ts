@@ -107,6 +107,8 @@ export interface IMaintenance {
   statusId: string;
   title: string;
   reason: string;
+  reasonRepair?: string;
+  solution?: string;
   repairFees?: number;
   timeMaintenance?: Date;
   images_request: any[];

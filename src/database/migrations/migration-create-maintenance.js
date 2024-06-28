@@ -80,6 +80,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      reasonRepair: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
+      solution: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
       repairFees: {
         allowNull: true,
         type: Sequelize.DOUBLE,

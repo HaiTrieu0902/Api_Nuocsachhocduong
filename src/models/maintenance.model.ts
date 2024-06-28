@@ -19,6 +19,8 @@ interface MaintenanceAttributes {
   statusId?: string;
   title?: string;
   reason?: string;
+  reasonRepair?: string;
+  solution?: string;
   repairFees?: number;
   timeMaintenance?: Date;
   images_request?: any[];
@@ -41,6 +43,8 @@ class Maintenance extends Model<MaintenanceAttributes, MaintenanceInput> impleme
   public statusId!: string;
   public title!: string;
   public reason!: string;
+  public reasonRepair?: string;
+  public solution?: string;
   public repairFees!: number;
   public timeMaintenance!: Date;
   public images_request!: any[];
@@ -129,6 +133,14 @@ Maintenance.init(
     },
     reason: {
       allowNull: false,
+      type: DataTypes.STRING,
+    },
+    reasonRepair: {
+      allowNull: true,
+      type: DataTypes.STRING,
+    },
+    solution: {
+      allowNull: true,
       type: DataTypes.STRING,
     },
     repairFees: {

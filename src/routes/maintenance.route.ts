@@ -18,12 +18,7 @@ routeMaintenance.post(
   MaintenanceController.CreateMaintenance,
 );
 
-routeMaintenance.put(
-  '/update-maintenance',
-  AuthMiddleware.Authentication,
-  AuthMiddleware.RolePrincipal,
-  MaintenanceController.UpdateMaintenance,
-);
+routeMaintenance.put('/update-maintenance', AuthMiddleware.Authentication, MaintenanceController.UpdateMaintenance);
 
 routeMaintenance.put(
   '/update-status-maintenance',

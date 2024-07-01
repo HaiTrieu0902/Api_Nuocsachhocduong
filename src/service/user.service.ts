@@ -46,7 +46,15 @@ export const UserService = {
       const schools = userData?.schoolIds
         ?.map((schoolId: string) => {
           const school = listSchool.rows.find((s: any) => s.id === schoolId);
-          return school ? { id: school.id, name: school.name } : null;
+          return school
+            ? {
+                id: school.id,
+                name: school.name,
+                address: school.address,
+                phoneNumber: school?.phoneNumber,
+                email: school?.email,
+              }
+            : null;
         })
         .filter((school: any) => school !== null);
 
@@ -59,7 +67,6 @@ export const UserService = {
   getDetailUserBySchool: async (req: Request, res: Response) => {
     try {
       const { schoolId } = req.params;
-      console.log('schoolId', schoolId);
       const data = await User.findAndCountAll({
         where: { roleId: '1aaa4422-d200-4fd8-b259-78875e823d06' },
         order: [['createdAt', 'DESC']],

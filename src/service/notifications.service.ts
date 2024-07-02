@@ -1,8 +1,14 @@
-import { initializeApp, applicationDefault } from 'firebase-admin/app';
+import axios from 'axios';
+import { applicationDefault, initializeApp } from 'firebase-admin/app';
 import { getMessaging } from 'firebase-admin/messaging';
-import { HttpStatusCode, SYSTEM_NOTIFICATION } from '../constant';
-import Helper from '../helper/Helper';
-import { Response } from 'express';
+import { JWT } from 'google-auth-library';
+import { serviceAccount } from '../firebase/serviceKeys';
+const jwtClient = new JWT({
+  email: serviceAccount.client_email,
+  key: serviceAccount.private_key,
+  scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
+});
+const clientUrl = `https://fcm.googleapis.com/v1/projects/${serviceAccount.project_id}/messages:send`;
 
 initializeApp({
   credential: applicationDefault(),
@@ -10,20 +16,43 @@ initializeApp({
 });
 process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
-export interface IDataDevices {
-  token: string;
-  title: string | any;
-  body: string | any;
+export interface INotificationMessage {
+  message: {
+    token: string;
+    notification: {
+      title: string;
+      body: string;
+      image?: string;
+    };
+    data: any;
+  };
 }
 
+const getAccessToken = async (): Promise<string> => {
+  return new Promise(function (resolve, reject) {
+    jwtClient.authorize(function (err, tokens) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(tokens?.access_token as never);
+    });
+  });
+};
+
+const cloneObj = (obj: any) => {
+  return JSON.parse(JSON.stringify(obj));
+};
+
 const NotificationService = {
-  createSingleNotiDevice: async (data: IDataDevices) => {
+  createSingleNotiDevice: async (data: INotificationMessage) => {
     const message = {
       notification: {
-        title: data?.title,
-        body: data?.body,
+        title: data?.message?.notification?.title,
+        body: data?.message?.notification?.body,
       },
-      token: data?.token,
+      token: data?.message?.token,
+      data: data?.message?.data,
     };
     await getMessaging()
       .send(message)
@@ -36,6 +65,25 @@ const NotificationService = {
 
     return message;
   },
+
+  sendMessageForUser: async (message: INotificationMessage) => {
+    try {
+      const accessToken = await getAccessToken();
+
+      const headers = {
+        Authorization: 'Bearer ' + accessToken,
+      };
+      const response = await axios.post(clientUrl, cloneObj(message), {
+        headers,
+      });
+
+      console.log('FCM response: ', JSON.stringify(response.data));
+    } catch (error) {
+      console.log('error: ', error);
+    }
+  },
+
+  /********************    NOTIFICATION   **************************/
 };
 
 export default NotificationService;

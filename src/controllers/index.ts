@@ -10,3 +10,4 @@ export { default as ProductController } from './product.controller';
 export { default as SchoolController } from './school.controller';
 export { default as InstallRecordController } from './installationRecord.controller';
 export { default as MaintenanceController } from './maintenance.controller';
+export { default as NotificationController } from './notification.controller';

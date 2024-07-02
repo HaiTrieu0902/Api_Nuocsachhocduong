@@ -11,6 +11,7 @@ import routeProduct from './product.route';
 import routeSchool from './school.role';
 import routeInstallRecord from './installationRecord.route';
 import routeMaintenance from './maintenance.route';
+import routeNotification from './notification.route';
 
 function route(app: express.Express) {
   /** AUTH . COMMON **/
@@ -30,5 +31,6 @@ function route(app: express.Express) {
   app.use('/api/school', routeSchool);
   app.use('/api/install', routeInstallRecord);
   app.use('/api/maintenance', routeMaintenance);
+  app.use('/api/notification', routeNotification);
 }
 export default route;

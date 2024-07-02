@@ -1,41 +1,12 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, json } from 'express';
 import routerInit from './routes';
 const cors = require('cors');
 const dotenv = require('dotenv');
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
+
+// import { initializeApp, applicationDefault } from 'firebase-admin/app';
+// import { getMessaging } from 'firebase-admin/messaging';
 
 const app = express();
-
-/** Ensure the uploads directory exists */
-// const uploadDir = path.join(__dirname, 'uploads');
-// if (!fs.existsSync(uploadDir)) {
-//   fs.mkdirSync(uploadDir);
-// }
-
-/** Upload Common file images */
-// const storage = multer.diskStorage({
-//   destination: function (req: Request, file: any, cb: any) {
-//     cb(null, uploadDir);
-//   },
-//   filename: function (req: Request, file: any, cb: any) {
-//     const timestamp = Date.now();
-//     const fileExtension = path.extname(file.originalname);
-//     const baseName = path.basename(file.originalname, fileExtension);
-//     const newFileName = `${baseName}-${timestamp}${fileExtension}`;
-//     cb(null, newFileName);
-//   },
-// });
-
-// const upload = multer({ storage: storage });
-
-// app.post('/api/common/upload-images', upload.array('images', 12), function (req: any, res, next) {
-//   res.send({
-//     status: 200,
-//     data: req.files,
-//   });
-// });
 
 /* Parser */
 dotenv.config();
@@ -51,9 +22,36 @@ app.get('/', (req: Request, res: Response) => {
 // app.use(routerInit);
 routerInit(app);
 
-/* Serve static files from the uploads directory */
-const uploadsPath = path.resolve(__dirname, '../uploads');
-app.use('/uploads', express.static(uploadsPath));
+/* firebase */
+// initializeApp({
+//   credential: applicationDefault(),
+//   projectId: 'nuocsachhocduong-977b6',
+// });
+// process.env.GOOGLE_APPLICATION_CREDENTIALS;
+
+// app.post('/sendNoti', function (req: Request, res: Response) {
+//   const receivedToken = req.body.token;
+//   const message = {
+//     notification: {
+//       title: 'Testing nah',
+//       body: 'cek',
+//     },
+//     token: receivedToken,
+//   };
+//   getMessaging()
+//     .send(message)
+//     .then((response) => {
+//       res.status(200).json({
+//         message: 'Success',
+//         token: receivedToken,
+//       });
+//     })
+//     .catch((error) => {
+//       res.status(500).json({
+//         message: error,
+//       });
+//     });
+// });
 
 app.listen(process.env.APP_PORT, () => {
   console.log(`Example app listening on port ${process.env.APP_PORT}`);

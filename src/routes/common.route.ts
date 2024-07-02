@@ -13,4 +13,7 @@ routeCommon.post(
 );
 routeCommon.get('/images/:fileName', CommonController.getImage);
 
+routeCommon.get('/get-devices', CommonController.GetListDevices);
+routeCommon.post('/create-device', CommonController.CreatDevices);
+routeCommon.delete('/remove-device/:id', AuthMiddleware.Authentication, CommonController.RemoveDevices);
 export default routeCommon;

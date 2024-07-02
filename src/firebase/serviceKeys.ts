@@ -11,18 +11,3 @@ export const serviceAccount = {
   client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
   universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN,
 };
-
-console.log(
-  '📢 [serviceKeys.ts:16]',
-  process.env.FIREBASE_TYPE,
-  process.env.FIREBASE_PROJECT_ID,
-  process.env.FIREBASE_PRIVATE_KEY_ID,
-  process.env.FIREBASE_PRIVATE_KEY,
-  process.env.FIREBASE_CLIENT_EMAIL,
-  process.env.FIREBASE_CLIENT_ID,
-  process.env.FIREBASE_AUTH_URI,
-  process.env.FIREBASE_TOKEN_URI,
-  process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-  process.env.FIREBASE_CLIENT_X509_CERT_URL,
-  process.env.FIREBASE_UNIVERSE_DOMAIN,
-);

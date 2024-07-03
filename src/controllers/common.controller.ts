@@ -39,10 +39,19 @@ const CommonController = {
 
   CreatDevices: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const newDevice = await Devices.create({ ...req.body }, { raw: true });
+      let newDevices;
+      const devices = await Devices.findOne({ where: { accountId: req.body?.accountId } });
+      if (devices) {
+        devices.token = req.body?.token;
+        const updatedDevices = await devices.save();
+        newDevices = updatedDevices?.dataValues;
+      } else {
+        const createdDevices = await Devices.create({ ...req.body }, { raw: true });
+        newDevices = createdDevices;
+      }
       return res
         .status(HttpStatusCode.Created)
-        .send(Helper.ResponseData(HttpStatusCode.Created, SYSTEM_NOTIFICATION?.SUCCESS, newDevice));
+        .send(Helper.ResponseData(HttpStatusCode.Created, SYSTEM_NOTIFICATION?.SUCCESS, newDevices));
     } catch (error) {
       return res
         .status(HttpStatusCode.InternalServerError)

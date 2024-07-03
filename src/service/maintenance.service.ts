@@ -6,9 +6,11 @@ import Maintenance from '../models/maintenance.model';
 import School from '../models/school.model';
 import Status from '../models/status.model';
 import User from '../models/user.model';
-import { IMaintenance, IStatusMaintenance } from '../types/interface';
-import { EROLE, ESTATUS } from '../constant/enum';
+import { IMaintenance, INotificationMessage, IStatusMaintenance } from '../types/interface';
+import { EMAINTENANCE, EROLE, EROLE_ID, ESTATUS } from '../constant/enum';
 import Product from '../models/product.model';
+import Devices from '../models/devices.model';
+import NotificationService from './notifications.service';
 
 const includeAttributes = [
   {
@@ -61,7 +63,49 @@ export const MaintenanceService = {
       if (check?.length > 0) {
         throw new Error(MESSAGES_ERROR.MAINTENANCE_INPROGRESS);
       }
+
+      const school = await School.findByPk(newsData?.schoolId);
+
+      const deviceAdmin = await Devices.findAndCountAll({
+        include: [{ model: User, as: 'user', attributes: ['id', 'fullName', 'roleId'] }],
+      });
+      const adminDevices = deviceAdmin?.rows.filter(
+        (device: any) => device?.user?.roleId === EROLE_ID.SUPER_ADMIN || device?.user?.roleId === EROLE_ID.ADMIN,
+      );
+
       const news = await Maintenance.create(newsData, { raw: true });
+
+      for (const device of adminDevices) {
+        const notification = await NotificationService.createNotification({
+          accountId: newsData?.accountId,
+          receiverId: device?.accountId,
+          data: {
+            title: `${school?.name} có một yêu cầu ${
+              newsData.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
+            } mới`,
+            time: new Date(),
+          },
+          type: 'maintenance',
+        });
+        const messageForStaff: INotificationMessage = {
+          message: {
+            token: device.token,
+            notification: {
+              title: `Yêu cầu ${newsData.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'}`,
+              body: `${school?.name} có một yêu cầu ${
+                newsData.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
+              } mới`,
+            },
+            data: {
+              title: `${school?.name} có một yêu cầu ${
+                newsData.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
+              } mới`,
+              notiId: notification.id,
+            },
+          },
+        };
+        await NotificationService.sendMessageForUser(messageForStaff);
+      }
       return news.toJSON();
     } catch (error: any) {
       throw new Error(`${error.message}`);

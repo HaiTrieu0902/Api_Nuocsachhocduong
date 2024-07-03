@@ -14,3 +14,15 @@ export enum ESTATUS {
   INPROGRESS_INSTALL = 'ea340138-fb2e-42d3-a312-6ce97a6d766a',
   DELETED = '6b06e733-c205-4c89-b5b3-c3bb9131575a',
 }
+
+export enum EROLE_ID {
+  SUPER_ADMIN = '96e3ba98-368c-4509-baf2-9033d2b1a10e',
+  ADMIN = 'c1b2a78f-7652-4a63-83a6-e7be987900e6',
+  STAFF = '1aaa4422-d200-4fd8-b259-78875e823d06',
+  PRINCIPAL = '5554872b-ee57-497a-b9fc-d2c3cd08bcb7',
+}
+
+export enum EMAINTENANCE {
+  BD = '8b746035-46bf-428f-b4db-b84e9b375b5f',
+  SC = 'd1e6d70f-bd4a-4acb-99bc-8801dab712cf',
+}

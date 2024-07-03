@@ -122,3 +122,15 @@ export interface IStatusMaintenance {
   staffId?: string;
   role?: string;
 }
+
+export interface INotificationMessage {
+  message: {
+    token: string;
+    notification: {
+      title: string;
+      body: string;
+      image?: string;
+    };
+    data?: any;
+  };
+}

@@ -56,6 +56,7 @@ const InstallRecordController = {
   CreateInstallRecord: async (req: Request, res: Response): Promise<Response> => {
     try {
       const newNews = await InstallRecordService.createInstallRecord(req.body, req);
+
       return res
         .status(HttpStatusCode.Created)
         .send(Helper.ResponseData(HttpStatusCode.Created, SYSTEM_NOTIFICATION?.SUCCESS, newNews));

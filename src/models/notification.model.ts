@@ -3,32 +3,34 @@ import connection from '@./../../src/config/connectDB';
 import { v4 as uuidv4 } from 'uuid';
 import User from './user.model';
 
-interface DevicesAttributes {
+interface NotificationAttributes {
   id?: string;
   accountId?: string;
   receiverId?: string;
   data?: any;
   type?: string;
   isRead?: boolean;
+  isReadAdmin?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface DevicesInput extends Optional<DevicesAttributes, 'id'> {}
-export interface DevicesOutput extends Required<DevicesAttributes> {}
+export interface NotificationInput extends Optional<NotificationAttributes, 'id'> {}
+export interface NotificationOutput extends Required<NotificationAttributes> {}
 
-class Devices extends Model<DevicesAttributes, DevicesInput> implements DevicesAttributes {
+class Notification extends Model<NotificationAttributes, NotificationInput> implements NotificationAttributes {
   public id!: string;
   public accountId!: string;
   public receiverId?: string;
   public data!: any;
   public type!: string;
   public isRead?: boolean;
+  public isReadAdmin?: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-Devices.init(
+Notification.init(
   {
     id: {
       allowNull: false,
@@ -57,6 +59,11 @@ Devices.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    isReadAdmin: {
+      allowNull: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize: connection,
@@ -64,6 +71,6 @@ Devices.init(
   },
 );
 
-User.hasMany(Devices, { foreignKey: 'accountId', as: 'device' });
-Devices.belongsTo(User, { foreignKey: 'accountId', as: 'user' });
-export default Devices;
+User.hasMany(Notification, { foreignKey: 'accountId', as: 'notification' });
+Notification.belongsTo(User, { foreignKey: 'accountId', as: 'user' });
+export default Notification;

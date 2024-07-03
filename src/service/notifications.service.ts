@@ -87,6 +87,7 @@ const NotificationService = {
   },
 
   /********************    NOTIFICATION   **************************/
+
   createNotification: async (data: INotification) => {
     try {
       const notification = await Notification.create(
@@ -100,15 +101,16 @@ const NotificationService = {
       throw error;
     }
   },
-  updateNotification: async (data: INotification) => {
+  readNotification: async (req: Request, res: Response) => {
     try {
-      const notification = await Notification.findByPk(data?.id);
+      const { id } = req.params;
+      const notification = await Notification.findByPk(id);
       if (!notification) {
         throw MESSAGES_ERROR.NOT_EXITS;
       }
-      Object.assign(notification as never, data);
-      notification.save();
-      return notification?.dataValues;
+      notification.isRead = true;
+      await notification.save();
+      return notification;
     } catch (error) {
       throw error;
     }

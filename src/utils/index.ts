@@ -4,6 +4,7 @@ import { Parameters, ParametersMutiplie } from '../types/interface';
 import { Op, Order, where } from 'sequelize';
 import { HttpStatusCode } from '../constant';
 import School from '../models/school.model';
+import Notification from '../models/notification.model';
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -173,12 +174,24 @@ export const getPaginatedListMutiplieModel = async (Parameters: ParametersMutipl
       order,
       attributes: Parameters?.attributes,
     });
-    return res.status(HttpStatusCode.Ok).send({
-      data: result.rows,
-      total: result.count,
-      page: page,
-      pageSize: pageSizes,
-    });
+
+    if (Parameters?.model?.name === 'Notification') {
+      const listUnread = await Notification.findAndCountAll({ where: { isRead: false } });
+      return res.status(HttpStatusCode.Ok).send({
+        data: result.rows,
+        total: result.count,
+        totalUnread: listUnread?.count,
+        page: page,
+        pageSize: pageSizes,
+      });
+    } else {
+      return res.status(HttpStatusCode.Ok).send({
+        data: result.rows,
+        total: result.count,
+        page: page,
+        pageSize: pageSizes,
+      });
+    }
   } catch (error) {
     return res
       .status(HttpStatusCode.InternalServerError)

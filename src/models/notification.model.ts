@@ -41,10 +41,18 @@ Notification.init(
     accountId: {
       allowNull: false,
       type: DataTypes.STRING,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
     },
     receiverId: {
       allowNull: false,
       type: DataTypes.STRING,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
     },
     data: {
       allowNull: false,
@@ -71,6 +79,9 @@ Notification.init(
   },
 );
 
-User.hasMany(Notification, { foreignKey: 'accountId', as: 'notification' });
-Notification.belongsTo(User, { foreignKey: 'accountId', as: 'user' });
+User.hasMany(Notification, { foreignKey: 'accountId', as: 'accountNotification' });
+Notification.belongsTo(User, { foreignKey: 'accountId', as: 'account' });
+
+User.hasMany(Notification, { foreignKey: 'receiverId', as: 'receiverNotification' });
+Notification.belongsTo(User, { foreignKey: 'receiverId', as: 'receiver' });
 export default Notification;

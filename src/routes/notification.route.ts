@@ -3,6 +3,12 @@ import AuthMiddleware from '../middlewares/auth';
 const express = require('express');
 const routeNotification = express.Router();
 
+routeNotification.get(
+  '/get-list-notification',
+  AuthMiddleware.Authentication,
+  NotificationController.GetListNotification,
+);
+
 routeNotification.post(
   '/create-notification-device',
   AuthMiddleware.Authentication,
@@ -14,6 +20,8 @@ routeNotification.post(
   AuthMiddleware.Authentication,
   NotificationController.CreateNotification,
 );
+
+routeNotification.put('/read-notification/:id', AuthMiddleware.Authentication, NotificationController.ReadNotification);
 
 routeNotification.delete(
   '/delete-notification/:id',

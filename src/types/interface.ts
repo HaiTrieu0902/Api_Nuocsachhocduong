@@ -82,7 +82,7 @@ export interface IinstallRecord {
   quantity: number;
   schoolId: string;
   staffId?: string;
-  accountId: string;
+  accountId?: string;
   timeInstall?: any | Date;
   statusId: string;
   totalAmount: number;

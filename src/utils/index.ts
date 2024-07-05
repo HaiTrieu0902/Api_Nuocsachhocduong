@@ -176,7 +176,14 @@ export const getPaginatedListMutiplieModel = async (Parameters: ParametersMutipl
     });
 
     if (Parameters?.model?.name === 'Notification') {
-      const listUnread = await Notification.findAndCountAll({ where: { isRead: false } });
+      let receiverId = query['receiverId'];
+
+      const listUnread = await Notification.findAndCountAll({
+        where: {
+          [Op.and]: [{ isRead: false }, { receiverId: receiverId }] as never,
+        },
+      });
+
       return res.status(HttpStatusCode.Ok).send({
         data: result.rows,
         total: result.count,

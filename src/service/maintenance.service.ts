@@ -12,6 +12,7 @@ import Product from '../models/product.model';
 import Devices from '../models/devices.model';
 import NotificationService from './notifications.service';
 
+// Has time will clean code
 const includeAttributes = [
   {
     model: CategoryMaintenance,
@@ -83,6 +84,7 @@ export const MaintenanceService = {
             title: `${school?.name} có một yêu cầu ${
               newsData.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
             } mới`,
+            statusId: newsData.statusId,
             time: new Date(),
           },
           type: 'maintenance',
@@ -100,6 +102,8 @@ export const MaintenanceService = {
               title: `${school?.name} có một yêu cầu ${
                 newsData.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
               } mới`,
+              statusId: newsData.statusId,
+              time: new Date(),
               notiId: notification.id,
             },
           },
@@ -135,14 +139,26 @@ export const MaintenanceService = {
   updateMaintenance: async (newsData: IMaintenance) => {
     try {
       const news = await Maintenance.findByPk(newsData.id, {
-        attributes: {
-          exclude: ['categoryMaintenanceId', 'accountId', 'installRecordId', 'staffId', 'schoolId', 'statusId'],
-        },
         include: includeAttributes,
       });
 
       if (!news) {
         throw new Error(MESSAGES_ERROR.NOT_EXITS);
+      }
+      const school = await School.findByPk(newsData?.schoolId);
+      if (newsData?.staffId) {
+        await NotificationService.createNotification({
+          accountId: news?.accountId,
+          receiverId: newsData?.staffId,
+          data: {
+            title: `Yêu cầu ${newsData.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'} cho ${
+              school?.name
+            } `,
+            statusId: news.statusId,
+            time: new Date(),
+          },
+          type: 'maintenance',
+        });
       }
 
       Object.assign(news, newsData);
@@ -156,23 +172,83 @@ export const MaintenanceService = {
 
   updateStatusMaintenance: async (newsData: IStatusMaintenance) => {
     try {
-      const rows = await Maintenance.findByPk(newsData.id);
+      const rows = await Maintenance.findByPk(newsData.id, { include: includeAttributes });
       if (!rows) {
         throw new Error(MESSAGES_ERROR.NOT_EXITS);
       }
+      const productName = await InstallRecord.findOne({
+        where: { id: rows.installRecordId },
+        include: { model: Product, as: 'product' },
+      });
+
       Object.assign(rows, newsData);
       if (newsData.staffId === rows.staffId) {
         rows.statusId = newsData.statusId as string;
         if (newsData.statusId === ESTATUS.COMPLETE) {
           rows.timeMaintenance = new Date();
+          await NotificationService.createNotification({
+            accountId: newsData?.staffId,
+            receiverId: rows.accountId,
+            data: {
+              title: `Đã hoàn thành ${
+                rows.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
+              } thiết bị ${productName?.product?.name}`,
+              time: new Date(),
+              statusId: ESTATUS.COMPLETE,
+            },
+            type: 'maintenance',
+          });
         }
       }
       if (newsData.role === EROLE.PRINCIPAL) {
         rows.statusId = newsData.statusId || ESTATUS.COMPLETED;
+
+        const deviceAdmin = await Devices.findAndCountAll({
+          include: [{ model: User, as: 'user', attributes: ['id', 'fullName', 'roleId'] }],
+        });
+        const adminDevices = deviceAdmin?.rows.filter(
+          (device: any) => device?.user?.roleId === EROLE_ID.SUPER_ADMIN || device?.user?.roleId === EROLE_ID.ADMIN,
+        );
+
+        for (const device of adminDevices) {
+          const notification = await NotificationService.createNotification({
+            accountId: rows?.accountId,
+            receiverId: device?.accountId,
+            data: {
+              title: `${rows?.staff?.fullName} đã ${
+                rows?.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
+              } cho trường ${rows?.school?.name} thành công`,
+              statusId: newsData.statusId || ESTATUS.COMPLETED,
+              time: new Date(),
+            },
+            type: 'maintenance',
+          });
+          const messageForStaff: INotificationMessage = {
+            message: {
+              token: device.token,
+              notification: {
+                title: `${rows?.categoryMaintenanceId === EMAINTENANCE.BD ? 'Bảo dưỡng' : 'Sửa chữa'} thành công`,
+                body: `${rows?.staff?.fullName} đã ${
+                  rows?.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
+                } cho trường ${rows?.school?.name} thành công`,
+              },
+              data: {
+                title: `${rows?.staff?.fullName} đã ${
+                  rows?.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
+                } cho trường ${rows?.school?.name} thành công`,
+                statusId: newsData.statusId || ESTATUS.COMPLETED,
+                time: new Date(),
+                notiId: notification.id,
+              },
+            },
+          };
+          await NotificationService.sendMessageForUser(messageForStaff);
+        }
       }
 
       await rows.save();
       return rows.dataValues;
+      return true;
     } catch (error: any) {
       throw new Error(`${error.message}`);
     }

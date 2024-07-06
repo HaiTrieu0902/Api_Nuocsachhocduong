@@ -142,6 +142,11 @@ export const MaintenanceService = {
         include: includeAttributes,
       });
 
+      const productName = await InstallRecord.findOne({
+        where: { id: news?.installRecord?.id },
+        include: { model: Product, as: 'product' },
+      });
+
       if (!news) {
         throw new Error(MESSAGES_ERROR.NOT_EXITS);
       }
@@ -156,6 +161,21 @@ export const MaintenanceService = {
             } `,
             statusId: news.statusId,
             time: new Date(),
+          },
+          type: 'maintenance',
+        });
+      }
+
+      if (newsData.statusId === ESTATUS.COMPLETE) {
+        await NotificationService.createNotification({
+          accountId: news?.staff?.id as string,
+          receiverId: news?.account?.id as string,
+          data: {
+            title: `Đã hoàn thành ${
+              news.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
+            } thiết bị ${productName?.product?.name}`,
+            time: new Date(),
+            statusId: ESTATUS.COMPLETE,
           },
           type: 'maintenance',
         });
@@ -176,30 +196,9 @@ export const MaintenanceService = {
       if (!rows) {
         throw new Error(MESSAGES_ERROR.NOT_EXITS);
       }
-      const productName = await InstallRecord.findOne({
-        where: { id: rows.installRecordId },
-        include: { model: Product, as: 'product' },
-      });
 
       Object.assign(rows, newsData);
-      if (newsData.staffId === rows.staffId) {
-        rows.statusId = newsData.statusId as string;
-        if (newsData.statusId === ESTATUS.COMPLETE) {
-          rows.timeMaintenance = new Date();
-          await NotificationService.createNotification({
-            accountId: newsData?.staffId,
-            receiverId: rows.accountId,
-            data: {
-              title: `Đã hoàn thành ${
-                rows.categoryMaintenanceId === EMAINTENANCE.BD ? 'bảo dưỡng' : 'sửa chữa'
-              } thiết bị ${productName?.product?.name}`,
-              time: new Date(),
-              statusId: ESTATUS.COMPLETE,
-            },
-            type: 'maintenance',
-          });
-        }
-      }
+
       if (newsData.role === EROLE.PRINCIPAL) {
         rows.statusId = newsData.statusId || ESTATUS.COMPLETED;
 

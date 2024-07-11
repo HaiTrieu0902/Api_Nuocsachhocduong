@@ -1,6 +1,6 @@
 import { StatusController } from '../controllers';
 import AuthMiddleware from '../middlewares/auth';
-const express = require('express');
+import express from 'express';
 const routeStatus = express.Router();
 
 routeStatus.get('/get-list-status', AuthMiddleware.Authentication, StatusController.GetList);

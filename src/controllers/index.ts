@@ -11,3 +11,4 @@ export { default as SchoolController } from './school.controller';
 export { default as InstallRecordController } from './installationRecord.controller';
 export { default as MaintenanceController } from './maintenance.controller';
 export { default as NotificationController } from './notification.controller';
+export { default as Revenuecontroller } from './revenue.controller';

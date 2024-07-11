@@ -1,6 +1,6 @@
 import { RoleController } from '../controllers';
 import AuthMiddleware from '../middlewares/auth';
-const express = require('express');
+import express from 'express';
 const routeRole = express.Router();
 
 routeRole.get('/get-list-role', AuthMiddleware.Authentication, AuthMiddleware.RoleAdmin, RoleController.GetList);

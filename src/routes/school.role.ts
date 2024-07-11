@@ -1,7 +1,7 @@
 import { NewsController, SchoolController } from '../controllers';
 import AuthMiddleware from '../middlewares/auth';
 
-const express = require('express');
+import express from 'express';
 const routeSchool = express.Router();
 
 routeSchool.get('/get-list-school', AuthMiddleware.Authentication, SchoolController.GetListSchool);

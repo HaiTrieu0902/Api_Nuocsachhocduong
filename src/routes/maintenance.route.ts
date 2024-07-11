@@ -1,7 +1,6 @@
 import { MaintenanceController } from '../controllers';
 import AuthMiddleware from '../middlewares/auth';
-
-const express = require('express');
+import express from 'express';
 const routeMaintenance = express.Router();
 
 routeMaintenance.get('/get-list-maintenance', AuthMiddleware.Authentication, MaintenanceController.GetListMaintenance);

@@ -6,6 +6,12 @@ import { MESSAGES_ERROR } from '../constant/error';
 import Devices from '../models/devices.model';
 import Helper from '../helper/Helper';
 import { getListWithPagination } from '../utils';
+import School from '../models/school.model';
+import User from '../models/user.model';
+import { EMAINTENANCE, EROLE_ID, ESTATUS } from '../constant/enum';
+import InstallRecord from './../models/installRecord.model';
+import Maintenance from '../models/maintenance.model';
+import { Op } from 'sequelize';
 
 const CommonController = {
   uploadImages: (req: Request, res: Response) => {
@@ -64,8 +70,8 @@ const CommonController = {
       const device = await Devices.findByPk(id);
       device?.destroy();
       return res
-        .status(HttpStatusCode.Created)
-        .send(Helper.ResponseData(HttpStatusCode.Created, SYSTEM_NOTIFICATION?.SUCCESS, device));
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION?.SUCCESS, device));
     } catch (error) {
       return res
         .status(HttpStatusCode.InternalServerError)

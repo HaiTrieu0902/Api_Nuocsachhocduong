@@ -1,8 +1,7 @@
 import { UserController } from '../controllers';
 import AuthMiddleware from '../middlewares/auth';
 import validations from '../middlewares/validation/validation';
-
-const express = require('express');
+import express from 'express';
 const routeUser = express.Router();
 
 routeUser.get('/get-list-user', AuthMiddleware.Authentication, UserController.GetListUser);

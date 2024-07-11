@@ -1,7 +1,7 @@
 import { InstallRecordController } from '../controllers';
 import AuthMiddleware from '../middlewares/auth';
 
-const express = require('express');
+import express from 'express';
 const routeInstallRecord = express.Router();
 
 routeInstallRecord.get(

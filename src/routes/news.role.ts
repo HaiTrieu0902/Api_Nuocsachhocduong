@@ -1,7 +1,7 @@
 import { NewsController } from '../controllers';
 import AuthMiddleware from '../middlewares/auth';
 
-const express = require('express');
+import express from 'express';
 const routeNews = express.Router();
 
 routeNews.get('/get-list-news', AuthMiddleware.Authentication, NewsController.GetListNews);

@@ -1,7 +1,7 @@
 import { ProductController } from '../controllers';
 import AuthMiddleware from '../middlewares/auth';
 
-const express = require('express');
+import express from 'express';
 const routeProduct = express.Router();
 
 routeProduct.get('/get-list-product', AuthMiddleware.Authentication, ProductController.GetListProduct);

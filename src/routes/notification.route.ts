@@ -1,6 +1,6 @@
 import { NotificationController } from '../controllers';
 import AuthMiddleware from '../middlewares/auth';
-const express = require('express');
+import express from 'express';
 const routeNotification = express.Router();
 
 routeNotification.get(

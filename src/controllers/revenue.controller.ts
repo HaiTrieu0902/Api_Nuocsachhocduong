@@ -12,7 +12,7 @@ import InstallRecord from './../models/installRecord.model';
 const RevenueController = {
   RevenueDashbroad: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { year } = req.query;
+      const { year, type } = req.query;
       const startDate = new Date(`${year}-01-01`);
       const endDate = new Date(`${year}-12-31`);
 
@@ -27,6 +27,7 @@ const RevenueController = {
           },
         },
       });
+
       const maintenances = await Maintenance.findAndCountAll({
         where: {
           [Op.and]: [
@@ -38,22 +39,29 @@ const RevenueController = {
           ],
         },
       });
+
       const dataChartInstall = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, total: 0 }));
       installRecords?.rows?.forEach((record) => {
         const month = new Date(record.timeInstall).getMonth();
-        dataChartInstall[month].total += record.totalAmount;
+        dataChartInstall[month].total += type === 'product' ? record?.quantity : record.totalAmount;
       });
+
       const dataChartMaitenance = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, total: 0 }));
+      let i = 0;
       maintenances.rows?.forEach((record) => {
         const month = new Date(record.timeMaintenance).getMonth();
         dataChartMaitenance[month].total += record.repairFees;
       });
+
       const data = {
         schools,
         staffs,
         installRecords: installRecords.count,
         maintenances: maintenances.count,
-        totalInstallRecord: installRecords?.rows?.reduce((acc, record) => acc + record.totalAmount, 0),
+        totalInstallRecord: installRecords?.rows?.reduce(
+          (acc, record) => acc + Number(type === 'product' ? record.quantity : record.totalAmount),
+          0,
+        ),
         totalMaitenance: maintenances?.rows?.reduce((acc, record) => acc + record.repairFees, 0),
         dataChartInstall: dataChartInstall,
         dataChartMaintenance: dataChartMaitenance,

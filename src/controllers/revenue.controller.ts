@@ -31,7 +31,6 @@ const RevenueController = {
       const maintenances = await Maintenance.findAndCountAll({
         where: {
           [Op.and]: [
-            { categoryMaintenanceId: EMAINTENANCE?.SC },
             {
               statusId: ESTATUS?.COMPLETED,
             },
@@ -76,99 +75,50 @@ const RevenueController = {
     }
   },
 
-  InvestEquipments: async (req: Request, res: Response): Promise<Response> => {
+  InvestEquipmentBySchool: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { schoolId, year } = req.query;
+      const { year, type, schoolId } = req.query;
       const startDate = new Date(`${year}-01-01`);
       const endDate = new Date(`${year}-12-31`);
 
-      const installs = await InstallRecord.findAll({
+      const installRecords = await InstallRecord.findAndCountAll({
         where: {
-          schoolId: schoolId as string,
+          statusId: ESTATUS.COMPLETED,
           timeInstall: {
             [Op.between]: [startDate, endDate],
           },
+          schoolId: schoolId as never,
         },
-        attributes: {
-          exclude: ['createdAt', 'updatedAt', 'isDelete'],
-        },
-        include: [
-          {
-            model: Product,
-            as: 'product',
-            attributes: ['id', 'name'],
-          },
-        ],
       });
 
-      const maintenances = await Maintenance.findAll({
+      const maintenances = await Maintenance.findAndCountAll({
         where: {
-          schoolId: schoolId as string,
-          timeMaintenance: {
-            [Op.between]: [startDate, endDate],
-          },
+          [Op.and]: [
+            {
+              statusId: ESTATUS?.COMPLETED,
+            },
+            { timeMaintenance: { [Op.between]: [startDate, endDate] } },
+            { schoolId: schoolId as never },
+          ],
         },
-        include: [
-          {
-            model: InstallRecord,
-            as: 'installRecord',
-            attributes: ['id', 'timeInstall', 'warrantyPeriod'],
-            include: [
-              {
-                model: Product,
-                as: 'product',
-                attributes: ['id', 'name'],
-              },
-            ],
-          },
-        ],
       });
-      const mergedDataMap = new Map();
-      installs.forEach((install) => {
-        const key = install.productId;
-        if (!mergedDataMap.has(key)) {
-          mergedDataMap.set(key, {
-            productId: install.productId,
-            productName: install.product?.name,
-            totalAmount: install.totalAmount,
-            quantity: install.quantity,
-            totalRepairFees: 0,
-            installCount: 1,
-            maintenanceCount: 0,
-          });
-        } else {
-          const existing = mergedDataMap.get(key);
-          existing.totalAmount += install.totalAmount;
-          existing.quantity += install.quantity;
-          existing.installCount += 1;
-          mergedDataMap.set(key, existing);
-        }
-      });
-      maintenances.forEach((maintenance) => {
-        const key = maintenance?.installRecord?.product?.id;
 
-        if (!mergedDataMap.has(key)) {
-          mergedDataMap.set(key, {
-            productId: maintenance?.installRecord?.product?.id,
-            totalAmount: 0,
-            quantity: 0,
-            totalRepairFees: maintenance.repairFees,
-            installCount: 0,
-            maintenanceCount: 1,
-          });
-        } else {
-          const existing = mergedDataMap.get(key);
-          existing.totalRepairFees += maintenance.repairFees;
-          existing.maintenanceCount += 1;
-          mergedDataMap.set(key, existing);
-        }
+      const dataChartInstall = Array.from({ length: 12 }, (_, i) => ({ month: i + 1, total: 0 }));
+      installRecords?.rows?.forEach((record) => {
+        const month = new Date(record.timeInstall).getMonth();
+        dataChartInstall[month].total += type === 'product' ? record?.quantity : record.totalAmount;
       });
-      const mergedData = Array.from(mergedDataMap.values());
 
       const data = {
-        installs,
-        maintenances,
-        mergedData,
+        installRecords: installRecords.count,
+        maintenances: maintenances.count,
+        quantity: installRecords?.rows?.reduce(
+          (acc, record) => acc + Number(type === 'product' ? record.quantity : record.totalAmount),
+          0,
+        ),
+        totalAmount: installRecords?.rows?.reduce((acc, record) => acc + record.totalAmount, 0),
+        totalMaitenance: maintenances?.rows?.reduce((acc, record) => acc + record.repairFees, 0),
+        dataChartInstall: dataChartInstall,
       };
       return res
         .status(HttpStatusCode.Ok)
@@ -186,26 +136,13 @@ const RevenueController = {
       const startDate = new Date(`${year}-01-01`);
       const endDate = new Date(`${year}-12-31`);
 
-      const installs = await InstallRecord.findAll({
-        where: {
-          schoolId: schoolId as string,
-          productId: productId as string,
-          timeInstall: {
-            [Op.between]: [startDate, endDate],
-          },
-        },
-        attributes: {
-          exclude: ['createdAt', 'updatedAt', 'isDelete'],
-        },
-      });
-
       const maintenances = await Maintenance.findAll({
         where: {
           schoolId: schoolId as string,
           '$installRecord.product.id$': productId as string,
-          timeMaintenance: {
-            [Op.between]: [startDate, endDate],
-          },
+          // timeMaintenance: {
+          //   [Op.between]: [startDate, endDate],
+          // },
         },
         include: [
           {
@@ -223,7 +160,6 @@ const RevenueController = {
         ],
       });
       const data = {
-        installs,
         maintenances,
       };
       return res

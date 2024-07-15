@@ -7,6 +7,7 @@ import Helper from '../helper/Helper';
 import Role from '../models/role.model';
 import User from '../models/user.model';
 import { ILogin } from '../types/interface';
+import School from '../models/school.model';
 export const AuthService = {
   loginUser: async (params: ILogin) => {
     try {
@@ -16,6 +17,15 @@ export const AuthService = {
         },
         include: [{ model: Role, as: 'role', attributes: ['role'] }],
         attributes: { exclude: ['roleId'] },
+      });
+
+      let transformedResult;
+      const listSchool = await School.findAndCountAll();
+      transformedResult = user?.schoolIds.map((schoolId: string) => {
+        const school = listSchool.rows.find((s: any) => s.id === schoolId);
+        return school
+          ? { id: school.id, name: school.name, address: school.address, phoneNumber: school?.phoneNumber }
+          : null;
       });
 
       if (!user) {
@@ -43,7 +53,7 @@ export const AuthService = {
       const userDataWithoutPassword = { ...user?.dataValues };
       delete userDataWithoutPassword.password;
 
-      return { ...userDataWithoutPassword, token: token };
+      return { ...userDataWithoutPassword, token: token, school: transformedResult };
     } catch (error: any) {
       throw error;
     }

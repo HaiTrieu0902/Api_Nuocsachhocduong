@@ -5,12 +5,13 @@ import Helper from '../helper/Helper';
 import { getPaginatedListMutiplieModel } from '../utils';
 import Notification from '../models/notification.model';
 import User from '../models/user.model';
+import { Sequelize } from 'sequelize';
 
 const NotificationController = {
   GetListNotification: async (req: Request, res: Response): Promise<Response> => {
     const Parameters = {
       model: Notification,
-      searchFields: ['data'],
+      searchFields: ['data', 'type'],
       conditions: {
         accountId: req.query.accountId,
         receiverId: req.query.receiverId,
@@ -33,6 +34,22 @@ const NotificationController = {
     };
     return getPaginatedListMutiplieModel(Parameters, req, res);
   },
+
+  GetListNotificationAdmin: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const list = await Notification.findAll({
+        where: Sequelize.literal(`JSON_UNQUOTE(JSON_EXTRACT(data, '$.title')) LIKE '%Yêu cầu%'`),
+      });
+      return res
+        .status(HttpStatusCode.Ok)
+        .send(Helper.ResponseData(HttpStatusCode.Ok, SYSTEM_NOTIFICATION?.SUCCESS, list));
+    } catch (error) {
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
+    }
+  },
+
   CreateSingleNotiDevice: async (req: Request, res: Response): Promise<Response> => {
     try {
       const newNotification = await NotificationService.createSingleNotiDevice(req.body);

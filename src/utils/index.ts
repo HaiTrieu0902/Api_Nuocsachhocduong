@@ -6,6 +6,8 @@ import { HttpStatusCode } from '../constant';
 import School from '../models/school.model';
 import Notification from '../models/notification.model';
 import Maintenance from '../models/maintenance.model';
+import { ESTATUS } from '../constant/enum';
+import { Sequelize } from '../models';
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -153,15 +155,24 @@ export const getPaginatedListMutiplieModel = async (Parameters: ParametersMutipl
       : {};
 
     if (search) {
-      where[Op.or] = Parameters?.searchFields.map((field) => ({
-        [field]: { [Op.like]: `%${search}%` },
-      }));
+      if (Parameters?.model?.name === 'InstallRecord' || Parameters?.model?.name === 'Maintenance') {
+        where[Op.or] = [
+          ...Parameters?.searchFields.map((field) => ({
+            [field]: { [Op.like]: `%${search}%` },
+          })),
+          { '$school.name$': { [Op.like]: `%${search}%` } },
+          { '$account.fullName$': { [Op.like]: `%${search}%` } },
+        ];
+      } else {
+        where[Op.or] = Parameters?.searchFields.map((field) => ({
+          [field]: { [Op.like]: `%${search}%` },
+        }));
+      }
     }
 
     if (isDelete !== undefined) {
       where.isDelete = isDelete === 'true';
     }
-
     const order: Order =
       sortBy && typeof sortBy === 'string'
         ? [[sortBy, typeof sortOrder === 'string' ? sortOrder : 'ASC']]
@@ -170,7 +181,7 @@ export const getPaginatedListMutiplieModel = async (Parameters: ParametersMutipl
     const result = await Parameters?.model.findAndCountAll({
       include: Parameters?.include,
       offset,
-      where,
+      where: where,
       limit: pageSizes,
       order,
       attributes: Parameters?.attributes,
@@ -178,16 +189,23 @@ export const getPaginatedListMutiplieModel = async (Parameters: ParametersMutipl
 
     if (Parameters?.model?.name === 'Notification') {
       let receiverId = query['receiverId'];
+      const resultt = await Notification.findAndCountAll({
+        include: Parameters?.include,
+        offset,
+        where: Sequelize.literal(`JSON_UNQUOTE(JSON_EXTRACT(data, '$.title')) LIKE '%${search}%'`),
+        limit: pageSizes,
+        order,
+        attributes: Parameters?.attributes,
+      });
 
       const listUnread = await Notification.findAndCountAll({
         where: {
           [Op.and]: [{ isRead: false }, { receiverId: receiverId }] as never,
         },
       });
-
       return res.status(HttpStatusCode.Ok).send({
-        data: result.rows,
-        total: result.count,
+        data: resultt.rows,
+        total: resultt.count,
         totalUnread: listUnread?.count,
         page: page,
         pageSize: pageSizes,
@@ -224,9 +242,19 @@ export const getPaginatedDeviceInstall = async (Parameters: ParametersMutiplie, 
       : {};
 
     if (search) {
-      where[Op.or] = Parameters?.searchFields.map((field) => ({
-        [field]: { [Op.like]: `%${search}%` },
-      }));
+      if (Parameters?.model?.name === 'InstallRecord') {
+        where[Op.or] = [
+          ...Parameters?.searchFields.map((field) => ({
+            [field]: { [Op.like]: `%${search}%` },
+          })),
+          { '$school.name$': { [Op.like]: `%${search}%` } },
+          { '$product.name$': { [Op.like]: `%${search}%` } },
+        ];
+      } else {
+        where[Op.or] = Parameters?.searchFields.map((field) => ({
+          [field]: { [Op.like]: `%${search}%` },
+        }));
+      }
     }
 
     if (isDelete !== undefined) {
@@ -241,7 +269,7 @@ export const getPaginatedDeviceInstall = async (Parameters: ParametersMutiplie, 
     const result = await Parameters?.model.findAndCountAll({
       include: Parameters?.include,
       offset,
-      where,
+      where: { ...where, statusId: [ESTATUS.COMPLETE, ESTATUS.COMPLETED] },
       limit: pageSizes,
       order,
       attributes: Parameters?.attributes,
@@ -249,8 +277,9 @@ export const getPaginatedDeviceInstall = async (Parameters: ParametersMutiplie, 
 
     const maintenances = await Maintenance.findAll({
       attributes: {
-        exclude: ['createdAt', 'updatedAt', 'images_response', 'images_request'],
+        exclude: ['images_response', 'images_request'],
       },
+      order: order,
     });
 
     // Create a mapping of maintenance records by installRecordId

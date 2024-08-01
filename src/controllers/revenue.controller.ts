@@ -21,7 +21,7 @@ const RevenueController = {
 
       const installRecords = await InstallRecord.findAndCountAll({
         where: {
-          statusId: ESTATUS.COMPLETED,
+          statusId: ESTATUS.COMPLETED || ESTATUS.COMPLETE,
           timeInstall: {
             [Op.between]: [startDate, endDate],
           },

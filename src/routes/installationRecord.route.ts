@@ -11,6 +11,12 @@ routeInstallRecord.get(
 );
 
 routeInstallRecord.get(
+  '/get-list-device-install',
+  AuthMiddleware.Authentication,
+  InstallRecordController.GetListDeviceInstall,
+);
+
+routeInstallRecord.get(
   '/get-detail-install/:id',
   AuthMiddleware.Authentication,
   InstallRecordController.GetDetailInstallRecord,

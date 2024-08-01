@@ -5,6 +5,7 @@ import { Op, Order, where } from 'sequelize';
 import { HttpStatusCode } from '../constant';
 import School from '../models/school.model';
 import Notification from '../models/notification.model';
+import Maintenance from '../models/maintenance.model';
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -199,6 +200,83 @@ export const getPaginatedListMutiplieModel = async (Parameters: ParametersMutipl
         pageSize: pageSizes,
       });
     }
+  } catch (error) {
+    return res
+      .status(HttpStatusCode.InternalServerError)
+      .send(Helper.ResponseError(HttpStatusCode.InternalServerError, '', error));
+  }
+};
+
+export const getPaginatedDeviceInstall = async (Parameters: ParametersMutiplie, req: Request, res: Response) => {
+  try {
+    const { page, pageSize, sortBy, sortOrder, search, isDelete, ...query } = req.query;
+    const pages = page ? Number(page) : 1;
+    const pageSizes = pageSize ? Number(pageSize) : 10;
+    const offset = (pages - 1) * pageSizes;
+
+    const where = Parameters?.conditions
+      ? Object.keys(Parameters?.conditions).reduce((acc: any, key) => {
+          if (query[key]) {
+            acc[key] = query[key];
+          }
+          return acc;
+        }, {})
+      : {};
+
+    if (search) {
+      where[Op.or] = Parameters?.searchFields.map((field) => ({
+        [field]: { [Op.like]: `%${search}%` },
+      }));
+    }
+
+    if (isDelete !== undefined) {
+      where.isDelete = isDelete === 'true';
+    }
+
+    const order: Order =
+      sortBy && typeof sortBy === 'string'
+        ? [[sortBy, typeof sortOrder === 'string' ? sortOrder : 'ASC']]
+        : [['createdAt', 'DESC']];
+
+    const result = await Parameters?.model.findAndCountAll({
+      include: Parameters?.include,
+      offset,
+      where,
+      limit: pageSizes,
+      order,
+      attributes: Parameters?.attributes,
+    });
+
+    const maintenances = await Maintenance.findAll({
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'images_response', 'images_request'],
+      },
+    });
+
+    // Create a mapping of maintenance records by installRecordId
+    const maintenanceMap = maintenances.reduce((acc: any, maintenance: any) => {
+      if (!acc[maintenance.installRecordId]) {
+        acc[maintenance.installRecordId] = [];
+      }
+      acc[maintenance.installRecordId].push(maintenance);
+      return acc;
+    }, {});
+
+    // Embed maintenance data into the corresponding install records
+    const installRecordsWithMaintenance = result.rows.map((record: any) => {
+      const maintenanceRecords = maintenanceMap[record.id] || [];
+      return {
+        ...record.dataValues,
+        maintenances: maintenanceRecords,
+      };
+    });
+
+    return res.status(HttpStatusCode.Ok).send({
+      data: installRecordsWithMaintenance,
+      total: result.count,
+      page: pages,
+      pageSize: pageSizes,
+    });
   } catch (error) {
     return res
       .status(HttpStatusCode.InternalServerError)

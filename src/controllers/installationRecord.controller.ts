@@ -7,7 +7,7 @@ import School from '../models/school.model';
 import Status from '../models/status.model';
 import User from '../models/user.model';
 import { InstallRecordService } from '../service';
-import { getPaginatedListMutiplieModel } from '../utils';
+import { getPaginatedDeviceInstall, getPaginatedListMutiplieModel } from '../utils';
 
 const InstallRecordController = {
   GetListInstallRecord: async (req: Request, res: Response): Promise<Response> => {
@@ -51,6 +51,49 @@ const InstallRecordController = {
       ],
     };
     return getPaginatedListMutiplieModel(Parameters, req, res);
+  },
+
+  GetListDeviceInstall: async (req: Request, res: Response): Promise<Response> => {
+    const Parameters = {
+      model: InstallRecord,
+      searchFields: ['totalAmount', 'quantity'],
+      conditions: {
+        accountId: req.query.accountId,
+        productId: req.query.productId,
+        staffId: req.query.staffId,
+        schoolId: req.query.schoolId,
+        statusId: req.query.statusId,
+      },
+      attributes: { exclude: ['productId', 'schoolId', 'statusId', 'staffId', 'accountId'] },
+      include: [
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['id', 'name', 'code', 'price', 'images', 'discount'],
+        },
+        {
+          model: School,
+          as: 'school',
+          attributes: ['id', 'name', 'address', 'email', 'phoneNumber'],
+        },
+        {
+          model: User,
+          as: 'account',
+          attributes: ['id', 'fullName'],
+        },
+        {
+          model: User,
+          as: 'staff',
+          attributes: ['id', 'fullName'],
+        },
+        {
+          model: Status,
+          as: 'status',
+          attributes: ['id', 'name'],
+        },
+      ],
+    };
+    return getPaginatedDeviceInstall(Parameters, req, res);
   },
 
   CreateInstallRecord: async (req: Request, res: Response): Promise<Response> => {
